@@ -1,22 +1,3 @@
-<!--
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.2.4
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2024 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
--->
 
 <!DOCTYPE html>
 <html lang="en" class="perfect-scrollbar-off nav-open">
@@ -39,12 +20,31 @@
       href="%PUBLIC_URL%/apple-icon.png"
     />
     <!-- Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
-      rel="stylesheet"
-    />
+<link
+  href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
+  rel="stylesheet"
+/>
+<!-- Font Awesome -->
+<link
+  href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+  rel="stylesheet"
+/>
+
     <title>Argon Dashboard React by Creative Tim</title>
     <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE"></script>
+    <!-- Tailwind CSS via CDN -->
+     <script src="https://cdn.tailwindcss.com"></script>
+
+     <script>
+  tailwind.config = {
+    prefix: 'tw-',
+    corePlugins: {
+      preflight: false
+    }
+  };
+</script>
+
+
   </head>
   <body>
     <noscript> You need to enable JavaScript to run this app. </noscript>

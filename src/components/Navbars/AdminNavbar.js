@@ -1,33 +1,9 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.2.4
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2024 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import { Link } from "react-router-dom";
-// reactstrap components
 import {
   DropdownMenu,
   DropdownItem,
   UncontrolledDropdown,
   DropdownToggle,
-  Form,
-  FormGroup,
-  InputGroupAddon,
-  InputGroupText,
-  Input,
-  InputGroup,
   Navbar,
   Nav,
   Container,
@@ -36,81 +12,80 @@ import {
 
 const AdminNavbar = (props) => {
   return (
-    <>
-      <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
-        <Container fluid>
-          <Link
-            className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block"
-            to="/"
-          >
-            {props.brandText}
-          </Link>
-          {/* Barre de recherche */}
-<form className="navbar-search navbar-search-light form-inline mr-sm-3 d-none d-md-flex ml-lg-auto">
-  <div className="form-group mb-0">
-    <div className="input-group input-group-alternative">
-      <div className="input-group-prepend">
-        <span className="input-group-text">
-          <i className="fas fa-search" />
-        </span>
-      </div>
-      <input
-        className="form-control"
-        placeholder="Rechercher..."
-        type="text"
-      />
-    </div>
-  </div>
-</form>
+    <Navbar className="navbar-top navbar-dark bg-primary" expand="md" id="navbar-main">
+      <Container fluid>
+        {/* Nom de la page */}
+        <Link className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" to="/">
+          {props.brandText}
+        </Link>
 
-          <Nav className="align-items-center d-none d-md-flex" navbar>
-            <UncontrolledDropdown nav>
-              <DropdownToggle className="pr-0" nav>
-                <Media className="align-items-center">
-                  <span className="avatar avatar-sm rounded-circle">
-                    <img
-                      alt="..."
-                      src={require("../../assets/img/theme/team-4-800x800.jpg")}
-                    />
+        {/* Barre de recherche stylée */}
+        <form className="form-inline mx-auto w-50">
+          <div className="input-group input-group-alternative w-100">
+            <input
+              className="form-control"
+              placeholder="Rechercher un document, un auteur..."
+              type="text"
+            />
+            <div className="input-group-append">
+              <span className="input-group-text bg-white">
+                <i className="fas fa-search text-primary" />
+              </span>
+            </div>
+          </div>
+        </form>
+
+        {/* Profil utilisateur */}
+        <Nav className="align-items-center" navbar>
+          <UncontrolledDropdown nav>
+            <DropdownToggle className="pr-0 d-flex align-items-center" nav>
+              <Media className="align-items-center">
+                <span className="avatar avatar-sm rounded-circle">
+                  <img
+                    alt="..."
+                    src={require("../../assets/img/theme/team-4-800x800.jpg")}
+                  />
+                </span>
+                <Media className="ml-2 d-none d-lg-block">
+                  <span className="mb-0 text-sm font-weight-bold text-white">
+                    Fatou Gueye <i className="fas fa-chevron-down ml-1" />
                   </span>
-                  <Media className="ml-2 d-none d-lg-block">
-                    <span className="mb-0 text-sm font-weight-bold">
-                      Jessica Jones
-                    </span>
-                  </Media>
                 </Media>
-              </DropdownToggle>
-              <DropdownMenu className="dropdown-menu-arrow" right>
-                <DropdownItem className="noti-title" header tag="div">
-                  <h6 className="text-overflow m-0">Welcome!</h6>
-                </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-single-02" />
-                  <span>My profile</span>
-                </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-settings-gear-65" />
-                  <span>Settings</span>
-                </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-calendar-grid-58" />
-                  <span>Activity</span>
-                </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-support-16" />
-                  <span>Support</span>
-                </DropdownItem>
-                <DropdownItem divider />
-                <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
-                  <i className="ni ni-user-run" />
-                  <span>Logout</span>
-                </DropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
-          </Nav>
-        </Container>
-      </Navbar>
-    </>
+              </Media>
+            </DropdownToggle>
+
+            {/* Sous-menu déroulant */}
+            <DropdownMenu className="dropdown-menu-arrow" right>
+              <DropdownItem to="/admin/user-profile" tag={Link}>
+                <i className="ni ni-single-02" />
+                <span>Mon profil</span>
+              </DropdownItem>
+              <DropdownItem to="/admin/consultations" tag={Link}>
+                <i className="ni ni-books" />
+                <span>Mes consultations</span>
+              </DropdownItem>
+              <DropdownItem to="/admin/emprunts" tag={Link}>
+                <i className="ni ni-archive-2" />
+                <span>Mes emprunts</span>
+              </DropdownItem>
+              <DropdownItem to="/admin/telechargements" tag={Link}>
+                <i className="ni ni-cloud-download-95" />
+                <span>Téléchargements</span>
+              </DropdownItem>
+              <DropdownItem to="/admin/settings" tag={Link}>
+                <i className="ni ni-settings-gear-65" />
+                <span>Paramètres</span>
+              </DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem href="#" onClick={(e) => e.preventDefault()}>
+                <i className="ni ni-user-run" />
+                <span>Se déconnecter</span>
+              </DropdownItem>
+            </DropdownMenu>
+          </UncontrolledDropdown>
+        </Nav>
+      </Container>
+    </Navbar>
   );
 };
 
