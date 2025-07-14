@@ -1,10 +1,10 @@
-import MainAccueil from "../views/Main/Accueil";
+// src/routes/mainRoutes.js
+import Accueil from "../views/Main/Accueil";
 
 const mainRoutes = [
   {
-    path: "/main/accueil",
-    name: "Accueil",
-    component: MainAccueil,
+    path: "accueil", // pas de /main ici
+    element: <Accueil />,
   },
 ];
 

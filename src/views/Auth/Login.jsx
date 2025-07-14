@@ -1,8 +1,7 @@
+// ✅ Login.jsx — Authentification UIDT avec vérification locale
 import React, { useState } from "react";
-import { Form, FormGroup, Label, Input, Button } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock, LogIn } from "lucide-react";
-import AuthLayout from "../../layouts/Auth";
 import logoUIDT from "../../assets/img/brand/logo-uidt2.jpeg";
 
 const Login = () => {
@@ -25,238 +24,61 @@ const Login = () => {
       setIsLoading(false);
       return;
     }
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    // Simulation de redirection selon l'email (à sécuriser côté serveur plus tard)
-    if (form.email.includes("admin")) navigate("/admin/index");
-    else if (form.email.includes("enseignant")) navigate("/enseignant/index");
-    else navigate("/etudiant/index");
+
+    // Vérifie les identifiants avec ceux du localStorage
+    const userData = JSON.parse(localStorage.getItem("utilisateur"));
+    if (!userData || form.email !== userData.email || form.password !== userData.password) {
+      setError("Identifiants incorrects. Veuillez réessayer.");
+      setIsLoading(false);
+      return;
+    }
+
+    // Connexion réussie
+    localStorage.setItem("utilisateurConnecte", JSON.stringify(userData));
+    navigate("/interface-principale");
     setIsLoading(false);
   };
 
   return (
-    <AuthLayout>
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "420px",
-          background: "rgba(255, 255, 255, 0.98)",
-          backdropFilter: "blur(12px)",
-          padding: "38px 32px 30px 32px",
-          boxShadow: "0 12px 32px rgba(30,58,138,0.10), 0 0 0 1px #e0e7ef",
-          borderRadius: "18px",
-          animation: "slideUp 0.7s cubic-bezier(.39,.575,.565,1)",
-        }}
-      >
-        <div style={{ textAlign: "center", marginBottom: "26px" }}>
-          <div
-            style={{
-              width: "72px",
-              height: "72px",
-              background: "#fff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto 18px",
-              boxShadow: "0 8px 24px rgba(30,58,138,0.18)",
-              borderRadius: "50%",
-              border: "2px solid #1e3a8a",
-            }}
-          >
-            <img
-              src={logoUIDT}
-              alt="Logo UIDT"
-              style={{
-                width: 54,
-                height: 54,
-                borderRadius: "50%",
-                objectFit: "cover",
-              }}
-            />
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
+      <div className="w-full max-w-md bg-white p-10 rounded-3xl shadow-2xl">
+        <div className="text-center mb-6">
+          <div className="w-20 h-20 mx-auto mb-4 bg-white border-4 border-blue-900 rounded-full flex items-center justify-center shadow-md">
+            <img src={logoUIDT} alt="UIDT" className="w-14 h-14 rounded-full object-cover" />
           </div>
-          <h2
-            style={{
-              color: "#1e293b",
-              fontSize: "25px",
-              fontWeight: "700",
-              marginBottom: "6px",
-            }}
-          >
-            Connexion
-          </h2>
-          <p
-            style={{
-              color: "#64748b",
-              fontWeight: "500",
-              fontSize: "15px",
-            }}
-          >
-            Accédez à votre espace UIDT
-          </p>
+          <h2 className="text-2xl font-bold text-slate-800">Connexion</h2>
+          <p className="text-slate-500 text-sm">Accédez à votre espace UIDT</p>
         </div>
-        {error && (
-          <div
-            style={{
-              color: "#dc2626",
-              fontWeight: 600,
-              fontSize: 15,
-              marginBottom: 18,
-              textAlign: "center",
-            }}
-          >
-            {error}
+
+        {error && <div className="text-red-600 text-center font-medium mb-4">{error}</div>}
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-slate-700">Email universitaire</label>
+            <input type="email" name="email" value={form.email} onChange={handleChange} className="mt-1 w-full rounded-md border border-slate-300 px-4 py-2.5" placeholder="prenom.nom@uidt.edu.sn" />
           </div>
-        )}
-        <Form onSubmit={handleSubmit} autoComplete="off">
-          <FormGroup style={{ marginBottom: "18px" }}>
-            <Label
-              for="email"
-              style={{ fontWeight: 600, color: "#1e3a8a" }}
-            >
-              <Mail
-                size={16}
-                style={{ marginRight: "6px" }}
-              />{" "}
-              Email universitaire
-            </Label>
-            <Input
-              type="email"
-              name="email"
-              id="email"
-              placeholder="prenom.nom@uidt.edu.sn"
-              value={form.email}
-              onChange={handleChange}
-              style={{
-                borderRadius: 10,
-                height: 44,
-                fontSize: 16,
-                border: "1px solid #cbd5e1",
-              }}
-            />
-          </FormGroup>
-          <FormGroup style={{ marginBottom: "18px" }}>
-            <Label
-              for="password"
-              style={{ fontWeight: 600, color: "#1e3a8a" }}
-            >
-              <Lock
-                size={16}
-                style={{ marginRight: "6px" }}
-              />{" "}
-              Mot de passe
-            </Label>
-            <div
-              style={{
-                position: "relative",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <Input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                id="password"
-                placeholder="••••••••"
-                value={form.password}
-                onChange={handleChange}
-                style={{
-                  borderRadius: 10,
-                  height: 44,
-                  fontSize: 16,
-                  border: "1px solid #cbd5e1",
-                  paddingRight: 38,
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position: "absolute",
-                  right: 10,
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  border: "none",
-                  background: "none",
-                  cursor: "pointer",
-                  padding: 0,
-                  margin: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700">Mot de passe</label>
+            <div className="relative">
+              <input type={showPassword ? "text" : "password"} name="password" value={form.password} onChange={handleChange} className="mt-1 w-full rounded-md border border-slate-300 px-4 py-2.5 pr-10" />
+              <button type="button" className="absolute top-1/2 right-3 -translate-y-1/2" onClick={() => setShowPassword(!showPassword)}>
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
-          </FormGroup>
-          <Button
-            color="primary"
-            block
-            disabled={isLoading}
-            type="submit"
-            style={{
-              height: "48px",
-              fontWeight: "600",
-              background:
-                "linear-gradient(135deg, #1e3a8a 0%, #2B8E41 100%)",
-              border: "none",
-              borderRadius: 10,
-              fontSize: 17,
-              marginTop: 8,
-              boxShadow: "0 2px 8px #1e3a8a22",
-              transition: "all 0.2s",
-              letterSpacing: 1,
-            }}
-          >
-            {isLoading ? (
-              "Connexion..."
-            ) : (
-              <>
-                <LogIn size={16} /> Se connecter
-              </>
-            )}
-          </Button>
-        </Form>
-        <p
-          style={{
-            textAlign: "center",
-            marginTop: "22px",
-            fontSize: "15px",
-            color: "#64748b",
-          }}
-        >
-          Nouveau sur la plateforme ?{" "}
-          <span
-            onClick={() => navigate("/auth/register")}
-            style={{
-              color: "#1e3a8a",
-              fontWeight: "600",
-              cursor: "pointer",
-            }}
-          >
-            Créer un compte
-          </span>
-        </p>
+          </div>
+
+          <button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-blue-900 to-green-600 text-white font-semibold py-3 rounded-lg shadow-md hover:scale-[1.01] transition-transform">
+            {isLoading ? "Connexion..." : <><LogIn size={16} className="inline mr-2" />Se connecter</>}
+          </button>
+
+          <p className="text-sm text-center text-slate-500 mt-4">
+            Nouveau sur la plateforme ?
+            <span onClick={() => navigate("/auth/register")} className="text-blue-700 font-semibold cursor-pointer ml-1">Créer un compte</span>
+          </p>
+        </form>
       </div>
-      <style>{`
-        @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px) scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-        div[style*='maxWidth: 420px'] {
-          transition: box-shadow 0.3s, transform 0.3s;
-        }
-        div[style*='maxWidth: 420px']:hover {
-          box-shadow: 0 16px 40px #1e3a8a33, 0 0 0 1px #2B8E41;
-          transform: translateY(-2px) scale(1.01);
-        }
-      `}</style>
-    </AuthLayout>
+    </div>
   );
 };
 

@@ -1,193 +1,239 @@
-import React, { useState, useMemo } from 'react';
-import { Search, Plus, Eye, Edit, Ban, Check, Filter } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, X, Pencil, ToggleLeft, ToggleRight } from 'lucide-react';
+
+const initialUsers = [
+  { id: 1, prenom: 'Ali', nom: 'Fall', email: 'ali.fall@uadb.edu.sn', role: 'Étudiant', actif: true },
+  { id: 2, prenom: 'Fatou', nom: 'Diop', email: 'fatou.diop@uadb.edu.sn', role: 'Enseignant', actif: true },
+  { id: 3, prenom: 'Moussa', nom: 'Ba', email: 'moussa.ba@uadb.edu.sn', role: 'Étudiant', actif: false },
+  { id: 4, prenom: 'Sokhna', nom: 'Sy', email: 'sokhna.sy@uadb.edu.sn', role: 'Enseignant', actif: true },
+  { id: 5, prenom: 'Oumar', nom: 'Ndiaye', email: 'oumar.ndiaye@uadb.edu.sn', role: 'Étudiant', actif: true },
+  { id: 6, prenom: 'Awa', nom: 'Sarr', email: 'awa.sarr@uadb.edu.sn', role: 'Enseignant', actif: true },
+];
 
 const GestionUtilisateurs = () => {
-  const [users, setUsers] = useState([
-    { id: 1, nom: 'Dupont', prenom: 'Jean', email: 'jean.dupont@univ.fr', role: 'Étudiant', statut: 'Actif', dateInscription: '2024-01-15' },
-    { id: 2, nom: 'Martin', prenom: 'Marie', email: 'marie.martin@univ.fr', role: 'Enseignant', statut: 'Actif', dateInscription: '2023-09-20' },
-    { id: 3, nom: 'Diallo', prenom: 'Amadou', email: 'amadou.diallo@univ.fr', role: 'Étudiant', statut: 'Actif', dateInscription: '2024-02-10' },
-    { id: 4, nom: 'Leroy', prenom: 'Sophie', email: 'sophie.leroy@univ.fr', role: 'Admin', statut: 'Actif', dateInscription: '2023-08-05' },
-    { id: 5, nom: 'Seck', prenom: 'Fatou', email: 'fatou.seck@univ.fr', role: 'Étudiant', statut: 'Actif', dateInscription: '2024-03-12' },
-    { id: 6, nom: 'Ndiaye', prenom: 'Moussa', email: 'moussa.ndiaye@univ.fr', role: 'Enseignant', statut: 'Actif', dateInscription: '2023-11-30' },
-    { id: 7, nom: 'Fall', prenom: 'Awa', email: 'awa.fall@univ.fr', role: 'Étudiant', statut: 'Actif', dateInscription: '2024-01-08' },
-    { id: 8, nom: 'Gueye', prenom: 'Ibrahima', email: 'ibrahima.gueye@univ.fr', role: 'Étudiant', statut: 'Actif', dateInscription: '2024-02-25' }
-  ]);
+  const [users, setUsers] = useState(initialUsers);
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({ prenom: '', nom: '', email: '', role: 'Étudiant', password: '' });
+  const [editingUser, setEditingUser] = useState(null);
 
   const [search, setSearch] = useState('');
-  const [roleFilter, setRoleFilter] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [formData, setFormData] = useState({ nom: '', prenom: '', email: '', role: 'Étudiant', statut: 'Actif' });
-  const [errors, setErrors] = useState({});
+  const [filterRole, setFilterRole] = useState('');
 
-  const handleView = (user) => {
-    alert(`Nom: ${user.prenom} ${user.nom}\nEmail: ${user.email}\nRôle: ${user.role}\nStatut: ${user.statut}`);
+  const openForm = (user = null) => {
+    if (user) {
+      setFormData(user);
+      setEditingUser(user);
+    } else {
+      setFormData({ prenom: '', nom: '', email: '', role: 'Étudiant', password: '' });
+      setEditingUser(null);
+    }
+    setShowModal(true);
   };
 
-  const handleEdit = (user) => {
-    setSelectedUser(user);
-    setFormData({ ...user });
-    setShowEditModal(true);
-  };
-
-  const handleAdd = () => {
-    setFormData({ nom: '', prenom: '', email: '', role: 'Étudiant', statut: 'Actif' });
-    setShowAddModal(true);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (editingUser) {
+      const updatedUsers = users.map((u) =>
+        u.id === editingUser.id ? { ...formData, id: editingUser.id } : u
+      );
+      setUsers(updatedUsers);
+    } else {
+      const newUser = { ...formData, id: users.length + 1, actif: true };
+      setUsers([...users, newUser]);
+    }
+    setShowModal(false);
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const validateForm = () => {
-    const errs = {};
-    if (!formData.nom) errs.nom = 'Nom requis';
-    if (!formData.prenom) errs.prenom = 'Prénom requis';
-    if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) errs.email = 'Email invalide';
-    return errs;
+  const toggleActif = (id) => {
+    const updated = users.map((u) =>
+      u.id === id ? { ...u, actif: !u.actif } : u
+    );
+    setUsers(updated);
   };
 
-  const handleSubmit = () => {
-    const validation = validateForm();
-    if (Object.keys(validation).length) {
-      setErrors(validation);
-      return;
-    }
-    if (showAddModal) {
-      const newUser = { ...formData, id: users.length + 1, dateInscription: new Date().toISOString().split('T')[0] };
-      setUsers(prev => [...prev, newUser]);
-      setShowAddModal(false);
-    } else if (showEditModal) {
-      setUsers(prev => prev.map(u => u.id === selectedUser.id ? { ...formData } : u));
-      setShowEditModal(false);
-    }
-    setFormData({ nom: '', prenom: '', email: '', role: 'Étudiant', statut: 'Actif' });
-    setErrors({});
-  };
+  // Filtrage des utilisateurs avec recherche et filtre par rôle
+  const filteredUsers = users.filter((u) => {
+    const matchSearch =
+      u.prenom.toLowerCase().includes(search.toLowerCase()) ||
+      u.nom.toLowerCase().includes(search.toLowerCase()) ||
+      u.email.toLowerCase().includes(search.toLowerCase());
 
-  const filteredUsers = useMemo(() => {
-    return users.filter(user => {
-      const matchSearch = user.nom.toLowerCase().includes(search.toLowerCase()) || user.prenom.toLowerCase().includes(search.toLowerCase());
-      const matchRole = roleFilter === '' || user.role === roleFilter;
-      return matchSearch && matchRole;
-    });
-  }, [users, search, roleFilter]);
+    const matchRole = filterRole ? u.role === filterRole : true;
+
+    return matchSearch && matchRole;
+  });
 
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4">Gestion des utilisateurs</h2>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold text-gray-800">👥 Gestion des utilisateurs</h1>
+        <button
+          onClick={() => openForm()}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+        >
+          <Plus size={18} />
+          Ajouter un utilisateur
+        </button>
+      </div>
 
-      <div className="input-group mb-3">
+      {/* Barre de recherche et filtre */}
+      <div className="flex flex-col md:flex-row gap-4">
         <input
           type="text"
-          className="form-control"
-          placeholder="Rechercher par nom ou prénom"
+          placeholder="🔍 Rechercher par prénom, nom ou email..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          className="w-full md:w-1/2 px-4 py-2 border rounded shadow-sm"
         />
-        <button className="btn btn-primary" type="button">
-          <Search size={16} className="me-1" /> Rechercher
-        </button>
+        <select
+          value={filterRole}
+          onChange={(e) => setFilterRole(e.target.value)}
+          className="w-full md:w-1/4 px-4 py-2 border rounded shadow-sm"
+        >
+          <option value="">Tous les rôles</option>
+          <option value="Étudiant">Étudiant</option>
+          <option value="Enseignant">Enseignant</option>
+        </select>
       </div>
 
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <select className="form-select" value={roleFilter} onChange={e => setRoleFilter(e.target.value)}>
-            <option value="">Tous les rôles</option>
-            <option value="Étudiant">Étudiant</option>
-            <option value="Enseignant">Enseignant</option>
-            <option value="Admin">Admin</option>
-          </select>
-        </div>
-        <button className="btn btn-success" onClick={handleAdd}>
-          <Plus size={16} className="me-1" /> Ajouter un utilisateur
-        </button>
-      </div>
-
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Email</th>
-            <th>Rôle</th>
-            <th>Statut</th>
-            <th>Date d'inscription</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUsers.map(user => (
-            <tr key={user.id}>
-              <td>{user.nom}</td>
-              <td>{user.prenom}</td>
-              <td>{user.email}</td>
-              <td>{user.role}</td>
-              <td>{user.statut}</td>
-              <td>{user.dateInscription}</td>
-              <td>
-                <button className="btn btn-sm btn-outline-primary me-2" onClick={() => handleView(user)}>
-                  <Eye size={16} />
-                </button>
-                <button className="btn btn-sm btn-outline-success" onClick={() => handleEdit(user)}>
-                  <Edit size={16} />
-                </button>
-              </td>
+      <div className="overflow-x-auto">
+        <table className="w-full table-auto bg-white shadow rounded">
+          <thead className="bg-gray-100">
+            <tr className="text-left text-sm text-gray-600">
+              <th className="p-3">Prénom</th>
+              <th className="p-3">Nom</th>
+              <th className="p-3">Email</th>
+              <th className="p-3">Rôle</th>
+              <th className="p-3">Statut</th>
+              <th className="p-3 text-center">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredUsers.slice(0, 6).map((user) => (
+              <tr key={user.id} className="border-t text-sm">
+                <td className="p-3">{user.prenom}</td>
+                <td className="p-3">{user.nom}</td>
+                <td className="p-3">{user.email}</td>
+                <td className="p-3">
+                  <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">{user.role}</span>
+                </td>
+                <td className="p-3">
+                  <span className={`px-2 py-1 rounded text-xs font-semibold ${user.actif ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                    {user.actif ? 'Actif' : 'Inactif'}
+                  </span>
+                </td>
+                <td className="p-3 flex items-center justify-center gap-3">
+                  <button onClick={() => openForm(user)} className="text-yellow-500 hover:text-yellow-600">
+                    <Pencil size={16} />
+                  </button>
+                  <button onClick={() => toggleActif(user.id)} className="text-gray-700 hover:text-gray-900">
+                    {user.actif ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-      {(showAddModal || showEditModal) && (
-        <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">{showAddModal ? 'Ajouter' : 'Modifier'} un utilisateur</h5>
-                <button type="button" className="btn-close" onClick={() => { setShowAddModal(false); setShowEditModal(false); }}></button>
-              </div>
-              <div className="modal-body">
-                <div className="mb-3">
-                  <label className="form-label">Nom</label>
-                  <input type="text" name="nom" className={`form-control ${errors.nom ? 'is-invalid' : ''}`} value={formData.nom} onChange={handleChange} />
-                  {errors.nom && <div className="invalid-feedback">{errors.nom}</div>}
+      {/* Modal d'ajout/modification */}
+      <AnimatePresence>
+        {showModal && (
+          <div className="fixed inset-0 z-50 bg-black bg-opacity-30 flex items-center justify-center">
+            <motion.div
+              className="bg-gradient-to-br from-green-100 via-blue-100 to-white p-8 rounded-lg shadow-lg w-full max-w-md relative"
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 50, opacity: 0 }}
+            >
+              <button
+                className="absolute top-3 right-3 text-gray-600 hover:text-gray-900"
+                onClick={() => setShowModal(false)}
+              >
+                <X size={20} />
+              </button>
+
+              <h2 className="text-xl font-bold mb-4 text-gray-800">
+                {editingUser ? 'Modifier' : 'Ajouter'} un utilisateur
+              </h2>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Prénom</label>
+                  <input
+                    name="prenom"
+                    value={formData.prenom}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded"
+                  />
                 </div>
-                <div className="mb-3">
-                  <label className="form-label">Prénom</label>
-                  <input type="text" name="prenom" className={`form-control ${errors.prenom ? 'is-invalid' : ''}`} value={formData.prenom} onChange={handleChange} />
-                  {errors.prenom && <div className="invalid-feedback">{errors.prenom}</div>}
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Nom</label>
+                  <input
+                    name="nom"
+                    value={formData.nom}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded"
+                  />
                 </div>
-                <div className="mb-3">
-                  <label className="form-label">Email</label>
-                  <input type="email" name="email" className={`form-control ${errors.email ? 'is-invalid' : ''}`} value={formData.email} onChange={handleChange} />
-                  {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Email</label>
+                  <input
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    type="email"
+                    className="w-full px-4 py-2 border border-gray-300 rounded"
+                  />
                 </div>
-                <div className="mb-3">
-                  <label className="form-label">Rôle</label>
-                  <select name="role" className="form-select" value={formData.role} onChange={handleChange}>
-                    <option value="Étudiant">Étudiant</option>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Rôle</label>
+                  <select
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded"
+                  >
                     <option value="Enseignant">Enseignant</option>
-                    <option value="Admin">Admin</option>
+                    <option value="Étudiant">Étudiant</option>
                   </select>
                 </div>
-                <div className="mb-3">
-                  <label className="form-label">Statut</label>
-                  <select name="statut" className="form-select" value={formData.statut} onChange={handleChange}>
-                    <option value="Actif">Actif</option>
-                    <option value="Bloqué">Bloqué</option>
-                  </select>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Mot de passe</label>
+                  <input
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required={!editingUser}
+                    type="password"
+                    className="w-full px-4 py-2 border border-gray-300 rounded"
+                  />
                 </div>
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => { setShowAddModal(false); setShowEditModal(false); }}>Annuler</button>
-                <button className="btn btn-primary" onClick={handleSubmit}>Valider</button>
-              </div>
-            </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+                >
+                  {editingUser ? 'Modifier' : 'Ajouter'}
+                </button>
+              </form>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 };

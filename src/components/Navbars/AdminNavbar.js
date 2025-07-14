@@ -42,8 +42,8 @@ const AdminNavbar = (props) => {
               <Media className="align-items-center">
                 <span className="avatar avatar-sm rounded-circle">
                   <img
-                    alt="..."
-                    src={require("../../assets/img/theme/team-4-800x800.jpg")}
+                    alt="Profil utilisateur"
+                    src="https://via.placeholder.com/40x40.png?text=Admin"
                   />
                 </span>
                 <Media className="ml-2 d-none d-lg-block">

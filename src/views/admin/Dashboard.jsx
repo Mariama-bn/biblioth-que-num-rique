@@ -1,231 +1,166 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  CardTitle,
-  CardText,
-  Button,
-  Input,
-  InputGroup,
-} from "reactstrap";
+  Users,
+  FileText,
+  BookOpen,
+  CalendarCheck,
+  FilePlus,
+  BarChart3,
+  Bell,
+  MessageSquare,
+  Settings,
+} from "lucide-react";
 
-const documentsParDomaine = {
-  "Sciences Économiques et Sociales": [
-    {
-      titre: "Management informatisé des organisations",
-      description: "Une exploration des outils informatiques pour une gestion efficace des organisations.",
-      image: "https://cdn.pixabay.com/photo/2016/11/19/14/00/code-1839406_960_720.jpg",
-      lien: "#",
-    },
-    {
-      titre: "Sciences Économiques et gestion",
-      description: "Principes fondamentaux de l'économie appliqués à la gestion moderne.",
-      image: "https://cdn.pixabay.com/photo/2016/11/29/05/08/analysis-1868728_960_720.jpg",
-      lien: "#",
-    },
-    {
-      titre: "Banque finance et assurance",
-      description: "Comprendre les mécanismes bancaires, les systèmes financiers et la gestion des risques.",
-      image: "https://cdn.pixabay.com/photo/2018/01/18/07/03/money-3085074_960_720.jpg",
-      lien: "#",
-    },
-  ],
-  "Sciences et Technologies": [
-    {
-      titre: "Mathématiques et Applications",
-      description: "Les outils mathématiques au service des sciences appliquées et de l'ingénierie.",
-      image: "https://cdn.pixabay.com/photo/2016/03/27/20/58/mathematics-1285019_960_720.jpg",
-      lien: "#",
-    },
-    {
-      titre: "Réseaux et Télécommunication",
-      description: "Bases des réseaux informatiques et infrastructures de communication.",
-      image: "https://cdn.pixabay.com/photo/2017/03/02/09/04/technology-2116013_960_720.jpg",
-      lien: "#",
-    },
-    {
-      titre: "Génie logiciel",
-      description: "Méthodes et pratiques de conception de logiciels robustes et maintenables.",
-      image: "https://cdn.pixabay.com/photo/2015/05/31/10/55/code-791175_960_720.jpg",
-      lien: "#",
-    },
-  ],
-  "Sciences de la Santé": [
-    {
-      titre: "Médecine",
-      description: "Les fondements de la médecine moderne et les parcours de soin.",
-      image: "https://cdn.pixabay.com/photo/2016/11/18/17/20/doctor-1836466_960_720.jpg",
-      lien: "#",
-    },
-    {
-      titre: "Pharmacie",
-      description: "Science du médicament et rôle du pharmacien dans la chaîne de soin.",
-      image: "https://cdn.pixabay.com/photo/2020/06/28/18/31/pills-5342638_960_720.jpg",
-      lien: "#",
-    },
-    {
-      titre: "Odontologie",
-      description: "Étude de la dentition humaine et soins dentaires.",
-      image: "https://cdn.pixabay.com/photo/2015/01/08/18/29/dentist-593984_960_720.jpg",
-      lien: "#",
-    },
-  ],
-  "Sciences de l’Ingénierie": [
-    {
-      titre: "Ingénieur de conception en géotechnique",
-      description: "Étude des sols et fondations pour des ouvrages stables et durables.",
-      image: "https://cdn.pixabay.com/photo/2018/02/01/08/53/engineering-3128497_960_720.jpg",
-      lien: "#",
-    },
-    {
-      titre: "Ingénieur de conception en génie civil",
-      description: "Conception et gestion de projets d’infrastructure et de bâtiment.",
-      image: "https://cdn.pixabay.com/photo/2015/06/24/15/45/architecture-820272_960_720.jpg",
-      lien: "#",
-    },
-    {
-      titre: "Ingénieur de conception en hydrogéologie",
-      description: "Gestion et exploitation des ressources en eau souterraine.",
-      image: "https://cdn.pixabay.com/photo/2017/04/25/08/40/water-2267083_960_720.jpg",
-      lien: "#",
-    },
-  ],
-};
+const stats = [
+  {
+    title: "Utilisateurs",
+    value: 145,
+    icon: <Users size={26} />,
+    color: "bg-blue-100 text-blue-800",
+  },
+  {
+    title: "Documents",
+    value: 320,
+    icon: <FileText size={26} />,
+    color: "bg-green-100 text-green-800",
+  },
+  {
+    title: "Emprunts",
+    value: 72,
+    icon: <BookOpen size={26} />,
+    color: "bg-yellow-100 text-yellow-800",
+  },
+  {
+    title: "Réservations",
+    value: 58,
+    icon: <CalendarCheck size={26} />,
+    color: "bg-purple-100 text-purple-800",
+  },
+];
 
-const CounterCard = ({ color, label, target }) => {
-  const [count, setCount] = useState(0);
+const quickLinks = [
+  {
+    title: "Nouvel utilisateur",
+    icon: <Users size={20} />,
+    link: "/admin/utilisateurs",
+  },
+  {
+    title: "Ajouter un document",
+    icon: <FilePlus size={20} />,
+    link: "/admin/documents",
+  },
+  {
+    title: "Voir statistiques",
+    icon: <BarChart3 size={20} />,
+    link: "/admin/statistiques",
+  },
+  {
+    title: "Paramètres",
+    icon: <Settings size={20} />,
+    link: "/admin/parametres",
+  },
+];
 
-  useEffect(() => {
-    let start = 0;
-    const duration = 1500;
-    const increment = target / (duration / 50);
+const recentActivities = [
+  {
+    time: "Il y a 10 min",
+    description: "Un nouvel utilisateur s’est inscrit.",
+    icon: <Users size={18} />,
+  },
+  {
+    time: "Il y a 30 min",
+    description: "Document ‘Blockchain.pdf’ a été ajouté.",
+    icon: <FileText size={18} />,
+  },
+  {
+    time: "Il y a 1h",
+    description: "Réservation validée pour l’étudiant Ali.",
+    icon: <CalendarCheck size={18} />,
+  },
+  {
+    time: "Il y a 2h",
+    description: "Nouveau message reçu via le formulaire de contact.",
+    icon: <MessageSquare size={18} />,
+  },
+];
 
-    const interval = setInterval(() => {
-      start += increment;
-      if (start >= target) {
-        start = target;
-        clearInterval(interval);
-      }
-      setCount(Math.ceil(start));
-    }, 50);
-
-    return () => clearInterval(interval);
-  }, [target]);
-
+const Dashboard = () => {
   return (
-    <Col md="4">
-      <Card className={`border-${color} text-center mb-4`}>
-        <CardBody>
-          <h2 className={`text-${color}`}>{count.toLocaleString()}</h2>
-          <p>{label}</p>
-        </CardBody>
-      </Card>
-    </Col>
-  );
-};
+    <div className="space-y-10">
+      {/* Titre */}
+      <h1 className="text-3xl font-bold text-gray-800">📊 Tableau de bord - Admin</h1>
 
-const Documents = () => {
-  const [search, setSearch] = useState("");
+      {/* Statistiques */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((stat, i) => (
+          <div
+            key={i}
+            className={`flex items-center space-x-4 p-5 rounded-lg shadow ${stat.color}`}
+          >
+            <div className="bg-white p-2 rounded-full">{stat.icon}</div>
+            <div>
+              <p className="text-sm">{stat.title}</p>
+              <p className="text-2xl font-semibold">{stat.value}</p>
+            </div>
+          </div>
+        ))}
+      </div>
 
-  const statistiques = [
-    { label: "Revues numériques", color: "primary", target: 18000 },
-    { label: "Ebooks", color: "success", target: 170000 },
-    { label: "Bases & plateformes", color: "info", target: 138 },
-  ];
-
-  return (
-    <div className="content">
-      <Container fluid>
-        <div
-          className="py-5 text-white text-center mb-4"
-          style={{ background: "#2dce89", borderRadius: "10px" }}
-        >
-          <h1>Bienvenue à la bibliothèque numérique de l'UIDT</h1>
-          <p>Explorez les ouvrages classés par UFR, accessibles partout</p>
+      {/* Activité récente + accès rapide */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Activités */}
+        <div className="bg-white shadow rounded-lg p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Bell size={20} className="text-blue-600" />
+            <h2 className="text-lg font-semibold text-gray-800">Activités récentes</h2>
+          </div>
+          <ul className="space-y-4">
+            {recentActivities.map((item, idx) => (
+              <li key={idx} className="flex items-start space-x-3">
+                <div className="text-blue-500 mt-1">{item.icon}</div>
+                <div>
+                  <p className="text-sm text-gray-700">{item.description}</p>
+                  <span className="text-xs text-gray-400">{item.time}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <Row className="mb-5">
-          {statistiques.map((stat, index) => (
-            <CounterCard
-              key={index}
-              label={stat.label}
-              color={stat.color}
-              target={stat.target}
-            />
-          ))}
-        </Row>
-
-        <Row className="mb-5">
-          <Col md="10">
-            <Input
-              placeholder="Rechercher un titre, un auteur ou un domaine..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </Col>
-          <Col md="2">
-            <Button color="primary" className="w-100">
-              Rechercher
-            </Button>
-          </Col>
-        </Row>
-
-        {Object.entries(documentsParDomaine).map(([domaine, livres], index) => {
-          const livresFiltres = livres.filter(
-            (livre) =>
-              livre.titre.toLowerCase().includes(search.toLowerCase()) ||
-              livre.description.toLowerCase().includes(search.toLowerCase()) ||
-              domaine.toLowerCase().includes(search.toLowerCase())
-          );
-
-          if (livresFiltres.length === 0) return null;
-
-          return (
-            <div key={index} className="mb-5">
-              <div
-                className="d-flex justify-content-between align-items-center px-3 py-2 mb-3"
-                style={{ backgroundColor: "#5e72e4", borderRadius: "6px" }}
+        {/* Accès rapide */}
+        <div className="bg-white shadow rounded-lg p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Settings size={20} className="text-green-600" />
+            <h2 className="text-lg font-semibold text-gray-800">Accès rapide</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {quickLinks.map((link, idx) => (
+              <a
+                key={idx}
+                href={link.link}
+                className="flex items-center p-3 border rounded hover:bg-gray-50 transition"
               >
-                <h4 className="text-white mb-0">{domaine}</h4>
-                <Button
-                  color="light"
-                  size="sm"
-                  onClick={() => alert(`Voir tous les documents de ${domaine}`)}
-                >
-                  Voir plus
-                </Button>
-              </div>
+                <div className="text-gray-700 mr-3">{link.icon}</div>
+                <span className="text-sm text-gray-800">{link.title}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
 
-              <Row>
-                {livresFiltres.map((livre, i) => (
-                  <Col md="4" key={i} className="mb-4">
-                    <Card className="shadow-sm">
-                      <img
-                        alt={livre.titre}
-                        src={livre.image}
-                        className="card-img-top"
-                        style={{ height: "250px", objectFit: "cover" }}
-                      />
-                      <CardBody>
-                        <CardTitle tag="h5">{livre.titre}</CardTitle>
-                        <CardText className="text-muted">{livre.description}</CardText>
-                        <Button color="info" size="sm" href={livre.lien}>
-                          Consulter
-                        </Button>
-                      </CardBody>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            </div>
-          );
-        })}
-      </Container>
+      {/* Section personnalisable */}
+      <div className="bg-white shadow rounded-lg p-6">
+        <h2 className="text-lg font-semibold mb-2 text-gray-800">
+          Remarques importantes
+        </h2>
+        <p className="text-sm text-gray-600">
+          N’oubliez pas de vérifier les demandes en attente et d’exporter les rapports
+          hebdomadaires. Vous pouvez configurer des notifications personnalisées depuis
+          les paramètres.
+        </p>
+      </div>
     </div>
   );
 };
 
-export default Documents;
+export default Dashboard;

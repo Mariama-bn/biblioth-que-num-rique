@@ -1,177 +1,178 @@
-import React, { useState, useEffect } from 'react';
-import './Accueil.css';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { BookOpen, Menu } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { allDocuments } from '../../data/documents';
 
-const mockDocuments = [
-  {
-    type: "Thèse",
-    title: "Impact du changement climatique sur l'agriculture au Sahel",
-    author: "Dr. Aminata Diallo",
-    year: "2024",
-    pages: "285",
-    downloads: "1,234",
-    description: "Une étude approfondie sur les effets du réchauffement climatique sur les pratiques agricoles traditionnelles dans la région sahélienne, avec des recommandations pour l'adaptation."
-  },
-  {
-    type: "Article",
-    title: "Développement durable et économie circulaire en Afrique de l'Ouest",
-    author: "Prof. Mamadou Seck",
-    year: "2024",
-    pages: "45",
-    downloads: "892",
-    description: "Analyse des opportunités et défis de l'économie circulaire comme modèle de développement durable pour les pays d'Afrique de l'Ouest."
-  },
-  {
-    type: "Livre",
-    title: "Histoire des royaumes du Sénégal pré-colonial",
-    author: "Dr. Fatou Ndiaye",
-    year: "2023",
-    pages: "456",
-    downloads: "2,156",
-    description: "Un ouvrage de référence sur l'organisation politique et sociale des royaumes sénégalais avant la colonisation européenne."
-  },
-  {
-    type: "Mémoire",
-    title: "L'entrepreneuriat féminin au Sénégal : défis et perspectives",
-    author: "Aïssatou Ba",
-    year: "2024",
-    pages: "128",
-    downloads: "567",
-    description: "Étude sur les obstacles et les opportunités que rencontrent les femmes entrepreneures dans le contexte socio-économique sénégalais."
-  },
-  {
-    type: "Rapport",
-    title: "État de la biodiversité marine en Afrique de l'Ouest",
-    author: "Institut de Recherche Marine",
-    year: "2023",
-    pages: "78",
-    downloads: "1,445",
-    description: "Rapport technique sur l'état actuel de la biodiversité marine et les mesures de conservation nécessaires."
-  },
-  {
-    type: "Article",
-    title: "Innovations pédagogiques dans l'enseignement supérieur africain",
-    author: "Dr. Ousmane Diop",
-    year: "2024",
-    pages: "32",
-    downloads: "743",
-    description: "Exploration des nouvelles approches pédagogiques adaptées au contexte africain et leur impact sur la qualité de l'enseignement."
-  }
+const ufrs = [
+  { id: 'sante', name: 'UFR Santé', color: 'from-blue-700 to-blue-900' },
+  { id: 'sciences', name: 'UFR Sciences', color: 'from-blue-700 to-blue-900' },
+  { id: 'lettres', name: 'UFR Lettres', color: 'from-blue-700 to-blue-900' },
+  { id: 'economie', name: 'UFR Économie', color: 'from-blue-700 to-blue-900' }
 ];
 
-function DocumentCard({ document, onPreview, onDownload }) {
-  return (
-    <div className="bg-white rounded-lg p-5 shadow-md hover:shadow-xl transition border border-gray-200 flex flex-col justify-between">
-      <div>
-        <div className="text-xs font-semibold text-white bg-indigo-500 px-2 py-1 rounded-full mb-3 w-fit">
-          {document.type}
-        </div>
-        <h3 className="text-lg font-bold text-gray-900 mb-1 line-clamp-2">{document.title}</h3>
-        <div className="text-sm text-indigo-600 mb-1 font-medium">{document.author}</div>
-        <div className="text-xs text-gray-500 flex flex-wrap gap-3 mb-3">
-          <span>📅 {document.year}</span>
-          <span>📄 {document.pages} pages</span>
-          <span>⬇️ {document.downloads}</span>
-        </div>
-        <p className="text-sm text-gray-600 mb-4 line-clamp-3">{document.description}</p>
-      </div>
-      <div className="flex gap-2 mt-2">
-        <button
-          className="px-4 py-2 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDownload(document.title);
-          }}
-        >
-          📥 Télécharger
-        </button>
-        <button
-          className="px-4 py-2 text-sm rounded border border-indigo-600 text-indigo-600 hover:bg-indigo-50"
-          onClick={(e) => {
-            e.stopPropagation();
-            onPreview(document.title);
-          }}
-        >
-          👁️ Aperçu
-        </button>
-      </div>
-    </div>
-  );
-}
+// Fonction pour générer documents fictifs si besoin
+const generateFakeDocuments = (ufrId, count, existingIds) => {
+  const docs = [];
+  for (let i = 1; i <= count; i++) {
+    const fakeId = `${ufrId}-doc-fake-${i}`;
+    if (existingIds.has(fakeId)) continue; // évite doublons
+    docs.push({
+      id: fakeId,
+      title: `Document fictif ${i} - ${ufrId.toUpperCase()}`,
+      description: "Description fictive pour compléter la liste.",
+      author: "Auteur fictif",
+      filiere: '',
+      ufr: ufrId
+    });
+  }
+  return docs;
+};
 
-function MainAccueil() {
-  const [documents, setDocuments] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+const Accueil = () => {
+  const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    setDocuments(mockDocuments);
-  }, []);
-
-  const handleSearch = () => {
-    const filtered = mockDocuments.filter((doc) =>
-      doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doc.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doc.author.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setDocuments(filtered);
+  // Récupérer documents réels + compléter jusqu'à 6
+  const documentsParUfr = (ufrId) => {
+    const docsReels = Object.values(allDocuments).filter(doc => doc.ufr === ufrId);
+    const existingIds = new Set(docsReels.map(doc => doc.id));
+    const manque = 6 - docsReels.length;
+    const docsFakes = manque > 0 ? generateFakeDocuments(ufrId, manque, existingIds) : [];
+    return [...docsReels, ...docsFakes];
   };
 
-  const handleDownload = (title) => {
-    alert(`Téléchargement du document : "${title}"`);
-  };
-
-  const handlePreview = (title) => {
-    alert(`Aperçu du document : "${title}"`);
-  };
+  const navLinks = [
+    { label: 'Accueil', to: '/' },
+    { label: 'Explorer', to: '/explorer' },
+    { label: 'Tous les documents', to: '/documents' }
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 slide-up">
-      <header className="bg-white shadow-sm sticky top-0 z-50">
+    <div className="bg-gray-50">
+      {/* Barre de navigation responsive */}
+      <header className="bg-white shadow sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-xl font-bold text-indigo-600">Bibliothèque UIDT</h1>
-          <nav className="flex gap-4">
-            <a href="#" className="text-sm font-medium text-gray-600 hover:text-indigo-600">Accueil</a>
-            <a href="#" className="text-sm font-medium text-indigo-600 border border-indigo-600 px-3 py-1 rounded hover:bg-indigo-50">Mon Compte</a>
-          </nav>
+          <h1 className="text-xl font-bold text-blue-800">Bibliothèque UIDT</h1>
+          <div className="hidden md:flex space-x-6">
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="text-gray-700 hover:text-green-600 font-medium transition"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+          <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
+            <Menu className="w-6 h-6 text-gray-800" />
+          </button>
         </div>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            className="bg-white shadow md:hidden px-4 pb-4 space-y-2"
+          >
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="block text-gray-700 hover:text-green-600 font-medium"
+                onClick={() => setIsOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </motion.div>
+        )}
       </header>
 
-      <section className="bg-indigo-50 py-10">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-gray-800 mb-3">Trouvez vos ressources académiques</h2>
-          <p className="text-gray-600 mb-6">Explorez des milliers de documents, thèses, articles et rapports disponibles</p>
-          <div className="relative max-w-xl mx-auto">
-            <input
-              type="text"
-              className="w-full border border-gray-300 rounded-full py-3 px-5 pr-20 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="Rechercher un document, un auteur, un sujet..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            />
-            <button
-              onClick={handleSearch}
-              className="absolute top-1/2 right-3 transform -translate-y-1/2 bg-indigo-600 text-white rounded-full px-4 py-2 text-sm hover:bg-indigo-700"
-            >
-              🔍
+      {/* Bannière principale */}
+      <section className="bg-gradient-to-r from-green-500 to-emerald-600 text-white py-20 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h1 className="text-5xl font-bold mb-4">
+            Bienvenue sur la Bibliothèque Numérique UIDT
+          </h1>
+          <p className="text-xl mb-6 max-w-2xl mx-auto">
+            Explorez toutes les ressources disponibles classées par UFR
+          </p>
+         <Link to="/auth/register">
+            <button className="bg-green-400 hover:bg-green-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg">
+            Créer un compte
             </button>
-          </div>
-        </div>
+          </Link>
+
+        </motion.div>
       </section>
 
-      <main className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {documents.map((doc, index) => (
-            <DocumentCard
-              key={index}
-              document={doc}
-              onDownload={handleDownload}
-              onPreview={handlePreview}
-            />
-          ))}
-        </div>
-      </main>
+      {/* UFR par blocs */}
+      {ufrs.map((ufr) => {
+        const docs = documentsParUfr(ufr.id);
+        return (
+          <section key={ufr.id} className="py-16">
+            <div className="max-w-7xl mx-auto px-4">
+              {/* Titre UFR + bouton "Voir tous les documents" */}
+              <div className="flex items-center justify-between mb-8 px-4 py-3 rounded-md bg-blue-200">
+                <h2 className="text-2xl font-bold text-blue-800">{ufr.name}</h2>
+                <Link to={`/ufr/${ufr.id}`}>
+                  <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded font-semibold shadow">
+                    Voir tous les documents
+                  </button>
+                </Link>
+              </div>
+
+              {/* Liste de documents */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+                {docs.map((doc, i) => (
+                  <motion.div
+                    key={doc.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg"
+                  >
+                    <div className="h-40 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                      <BookOpen className="text-white w-10 h-10" />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-bold text-gray-800 mb-1 truncate">{doc.title}</h3>
+                      <p className="text-sm text-gray-600 line-clamp-2 mb-2">{doc.description}</p>
+                      <p className="text-xs text-gray-500 mb-3">{doc.author}</p>
+                      <Link to={`/document/${doc.id}`}>
+                        <button className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded font-medium">
+                          Consulter
+                        </button>
+                      </Link>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      })}
+
+      {/* Appel final à l'action */}
+      <section className="py-16 bg-green-600 text-white text-center">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <h2 className="text-3xl font-bold mb-4">Rejoignez la communauté UIDT</h2>
+          <p className="text-lg mb-6">
+            Accédez à des milliers de documents utiles pour vos études
+          </p>
+          <Link to="/auth/register"> 
+            <button className="bg-white text-green-600 px-6 py-3 rounded-xl font-semibold hover:bg-gray-100 shadow">
+              Commencer maintenant
+            </button>
+          </Link>
+        </motion.div>
+      </section>
     </div>
   );
-}
+};
 
-export default MainAccueil;
+export default Accueil;
