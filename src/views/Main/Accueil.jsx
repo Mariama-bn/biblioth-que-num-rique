@@ -4,6 +4,9 @@ import { BookOpen, Menu } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { allDocuments } from '../../data/documents';
 
+// ✅ Import de l’image de fond
+import headerImg from '../../assets/img/theme/img-biblio-uidt4.jpg';
+
 const ufrs = [
   { id: 'sante', name: 'UFR Santé', color: 'from-blue-700 to-blue-900' },
   { id: 'sciences', name: 'UFR Sciences', color: 'from-blue-700 to-blue-900' },
@@ -11,12 +14,11 @@ const ufrs = [
   { id: 'economie', name: 'UFR Économie', color: 'from-blue-700 to-blue-900' }
 ];
 
-// Fonction pour générer documents fictifs si besoin
 const generateFakeDocuments = (ufrId, count, existingIds) => {
   const docs = [];
   for (let i = 1; i <= count; i++) {
     const fakeId = `${ufrId}-doc-fake-${i}`;
-    if (existingIds.has(fakeId)) continue; // évite doublons
+    if (existingIds.has(fakeId)) continue;
     docs.push({
       id: fakeId,
       title: `Document fictif ${i} - ${ufrId.toUpperCase()}`,
@@ -32,7 +34,6 @@ const generateFakeDocuments = (ufrId, count, existingIds) => {
 const Accueil = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Récupérer documents réels + compléter jusqu'à 6
   const documentsParUfr = (ufrId) => {
     const docsReels = Object.values(allDocuments).filter(doc => doc.ufr === ufrId);
     const existingIds = new Set(docsReels.map(doc => doc.id));
@@ -49,7 +50,7 @@ const Accueil = () => {
 
   return (
     <div className="bg-gray-50">
-      {/* Barre de navigation responsive */}
+      {/* Barre de navigation */}
       <header className="bg-white shadow sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-xl font-bold text-blue-800">Bibliothèque UIDT</h1>
@@ -88,35 +89,38 @@ const Accueil = () => {
         )}
       </header>
 
-      {/* Bannière principale */}
-      <section className="bg-gradient-to-r from-green-500 to-emerald-600 text-white py-20 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h1 className="text-5xl font-bold mb-4">
+      {/* ✅ Bannière avec image (pas de bouton créer compte) */}
+      <section className="relative h-[400px] w-full overflow-hidden">
+        <img
+          src={headerImg}
+          alt="Bibliothèque UIDT"
+          className="w-full h-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-black/40 flex flex-col justify-center items-center text-white text-center px-4">
+          <motion.h1
+            className="text-4xl md:text-5xl font-bold mb-4"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
             Bienvenue sur la Bibliothèque Numérique UIDT
-          </h1>
-          <p className="text-xl mb-6 max-w-2xl mx-auto">
+          </motion.h1>
+          <motion.p
+            className="text-lg md:text-xl max-w-2xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
             Explorez toutes les ressources disponibles classées par UFR
-          </p>
-         <Link to="/auth/register">
-            <button className="bg-green-400 hover:bg-green-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg">
-            Créer un compte
-            </button>
-          </Link>
-
-        </motion.div>
+          </motion.p>
+        </div>
       </section>
 
-      {/* UFR par blocs */}
+      {/* Blocs UFR */}
       {ufrs.map((ufr) => {
         const docs = documentsParUfr(ufr.id);
         return (
           <section key={ufr.id} className="py-16">
             <div className="max-w-7xl mx-auto px-4">
-              {/* Titre UFR + bouton "Voir tous les documents" */}
               <div className="flex items-center justify-between mb-8 px-4 py-3 rounded-md bg-blue-200">
                 <h2 className="text-2xl font-bold text-blue-800">{ufr.name}</h2>
                 <Link to={`/ufr/${ufr.id}`}>
@@ -126,8 +130,7 @@ const Accueil = () => {
                 </Link>
               </div>
 
-              {/* Liste de documents */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {docs.map((doc, i) => (
                   <motion.div
                     key={doc.id}
@@ -157,14 +160,14 @@ const Accueil = () => {
         );
       })}
 
-      {/* Appel final à l'action */}
+      {/* Appel à l’action final (on peut l’enlever si tu veux aussi) */}
       <section className="py-16 bg-green-600 text-white text-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <h2 className="text-3xl font-bold mb-4">Rejoignez la communauté UIDT</h2>
           <p className="text-lg mb-6">
             Accédez à des milliers de documents utiles pour vos études
           </p>
-          <Link to="/auth/register"> 
+          <Link to="/auth/register">
             <button className="bg-white text-green-600 px-6 py-3 rounded-xl font-semibold hover:bg-gray-100 shadow">
               Commencer maintenant
             </button>

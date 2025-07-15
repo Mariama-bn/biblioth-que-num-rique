@@ -40,7 +40,7 @@ const RapportsStatistiques = () => {
   const repartitionRoles = [
     { name: 'Étudiants', value: 220 },
     { name: 'Enseignants', value: 110 },
-    { name: 'Admins', value: 24 },
+    { name: 'Admins', value: 1 },
   ];
 
   const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444'];

@@ -1,18 +1,31 @@
 // src/components/Header/MainHeader.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search, User, ChevronDown, HelpCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 const MainHeader = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState({
-    name: "Fatou Diouf",
-    isAuthenticated: false,
-  });
-
   const [searchQuery, setSearchQuery] = useState("");
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isHelpMenuOpen, setIsHelpMenuOpen] = useState(false);
+
+  const [user, setUser] = useState({
+    name: "",
+    role: "",
+    isAuthenticated: false,
+  });
+
+  useEffect(() => {
+    const stored = localStorage.getItem("utilisateur");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      setUser({
+        name: `${parsed.prenom} ${parsed.nom || ""}`.trim(),
+        role: parsed.role,
+        isAuthenticated: true,
+      });
+    }
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -22,8 +35,16 @@ const MainHeader = () => {
   };
 
   const handleSignOut = () => {
-    setUser({ name: "", isAuthenticated: false });
+    localStorage.removeItem("utilisateur");
+    setUser({ name: "", role: "", isAuthenticated: false });
     setIsUserMenuOpen(false);
+    navigate("/accueil");
+  };
+
+  const redirectToDashboard = () => {
+    if (user.role === "admin") navigate("/admin/dashboard");
+    else if (user.role === "etudiant") navigate("/etudiant/dashboard");
+    else if (user.role === "enseignant") navigate("/enseignant/dashboard");
   };
 
   return (
@@ -32,10 +53,7 @@ const MainHeader = () => {
         <div className="tw-flex tw-items-center tw-justify-between tw-h-16">
           {/* Barre de recherche */}
           <div className="tw-flex-1 tw-flex tw-justify-center">
-            <form
-              onSubmit={handleSearch}
-              className="tw-flex tw-w-full tw-max-w-xl"
-            >
+            <form onSubmit={handleSearch} className="tw-flex tw-w-full tw-max-w-xl">
               <div className="tw-relative tw-flex-grow">
                 <span className="tw-absolute tw-inset-y-0 tw-left-0 tw-pl-3 tw-flex tw-items-center">
                   <Search className="tw-h-5 tw-w-5 tw-text-gray-400" />
@@ -59,8 +77,8 @@ const MainHeader = () => {
 
           {/* Icônes côté droit */}
           <div className="tw-flex tw-items-center tw-space-x-6">
-            {/* Menu S’inscrire */}
-            <div className="tw-relative tw-z-[9999]">
+            {/* Menu Utilisateur */}
+            <div className="tw-relative">
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 className="tw-flex tw-items-center tw-space-x-2 tw-text-gray-700 hover:tw-text-green-600"
@@ -91,24 +109,18 @@ const MainHeader = () => {
                     </>
                   ) : (
                     <>
-                      <Link
-                        to="/profil"
-                        className="tw-block tw-px-4 tw-py-2 hover:tw-bg-gray-100 tw-no-underline"
+                      <button
+                        onClick={redirectToDashboard}
+                        className="tw-block tw-w-full tw-text-left tw-px-4 tw-py-2 tw-text-sm tw-text-gray-700 hover:tw-bg-gray-100"
                       >
-                        Mon compte
-                      </Link>
-                      <Link
-                        to="/favoris"
-                        className="tw-block tw-px-4 tw-py-2 hover:tw-bg-gray-100 tw-no-underline"
-                      >
-                        Mes favoris
-                      </Link>
+                        🔗 Accéder à mon interface
+                      </button>
                       <hr className="tw-my-1" />
                       <button
                         onClick={handleSignOut}
                         className="tw-block tw-w-full tw-text-left tw-px-4 tw-py-2 tw-text-sm tw-text-gray-700 hover:tw-bg-gray-100"
                       >
-                        Se déconnecter
+                        🚪 Se déconnecter
                       </button>
                     </>
                   )}
@@ -117,7 +129,7 @@ const MainHeader = () => {
             </div>
 
             {/* Menu Aide */}
-            <div className="tw-relative tw-z-[9999]">
+            <div className="tw-relative">
               <button
                 onClick={() => setIsHelpMenuOpen(!isHelpMenuOpen)}
                 className="tw-flex tw-items-center tw-space-x-2 tw-text-gray-700 hover:tw-text-green-600"
@@ -128,28 +140,16 @@ const MainHeader = () => {
               </button>
               {isHelpMenuOpen && (
                 <div className="tw-absolute tw-right-0 tw-mt-2 tw-w-56 tw-bg-white tw-rounded-md tw-shadow-lg tw-py-1 tw-z-[9999]">
-                  <Link
-                    to="/aide/faq"
-                    className="tw-block tw-px-4 tw-py-2 hover:tw-bg-gray-100 tw-no-underline"
-                  >
+                  <Link to="/aide/faq" className="tw-block tw-px-4 tw-py-2 hover:tw-bg-gray-100">
                     Foire aux questions
                   </Link>
-                  <Link
-                    to="/aide/contact"
-                    className="tw-block tw-px-4 tw-py-2 hover:tw-bg-gray-100 tw-no-underline"
-                  >
+                  <Link to="/aide/contact" className="tw-block tw-px-4 tw-py-2 hover:tw-bg-gray-100">
                     Contactez-nous
                   </Link>
-                  <Link
-                    to="/aide/regles"
-                    className="tw-block tw-px-4 tw-py-2 hover:tw-bg-gray-100 tw-no-underline"
-                  >
+                  <Link to="/aide/regles" className="tw-block tw-px-4 tw-py-2 hover:tw-bg-gray-100">
                     Règles d’utilisation
                   </Link>
-                  <Link
-                    to="/aide/probleme"
-                    className="tw-block tw-px-4 tw-py-2 hover:tw-bg-gray-100 tw-no-underline"
-                  >
+                  <Link to="/aide/probleme" className="tw-block tw-px-4 tw-py-2 hover:tw-bg-gray-100">
                     Signaler un problème
                   </Link>
                 </div>

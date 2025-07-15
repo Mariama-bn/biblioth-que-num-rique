@@ -3,6 +3,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// ✅ Ajout de AuthProvider
+import { AuthProvider } from "./contexts/AuthContext";
+
 // Layouts
 import AdminLayout from "./layouts/Admin";
 import AuthWrapper from "./layouts/AuthWrapper.jsx";
@@ -58,66 +61,67 @@ import Probleme from './pages/Aide/Probleme';
 function App() {
   return (
     <BrowserRouter>
-      <ToastContainer position="top-right" autoClose={3000} />
-      <Routes>
-        {/* Admin Layout */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="utilisateurs" element={<GestionUtilisateurs />} />
-          <Route path="documents" element={<GestionDocuments />} />
-          <Route path="emprunts" element={<Emprunts />} />
-          <Route path="reservations" element={<Reservations />} />
-          <Route path="demandesacquisitions" element={<DemandesAcquisition />} />
+      <AuthProvider>
+        <ToastContainer position="top-right" autoClose={3000} />
+        <Routes>
+          {/* Admin Layout */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="utilisateurs" element={<GestionUtilisateurs />} />
+            <Route path="documents" element={<GestionDocuments />} />
+            <Route path="emprunts" element={<Emprunts />} />
+            <Route path="reservations" element={<Reservations />} />
+            <Route path="demandesacquisitions" element={<DemandesAcquisition />} />
+            <Route path="statistiques" element={<RapportsStatistiques />} />
+            <Route path="parametres" element={<Parametres />} />
+          </Route>
 
-          <Route path="statistiques" element={<RapportsStatistiques />} />
-          <Route path="parametres" element={<Parametres />} />
-        </Route>
+          {/* Auth */}
+          <Route path="/auth/*" element={<AuthWrapper />}>
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+          </Route>
 
-        {/* Auth */}
-        <Route path="/auth/*" element={<AuthWrapper />}>
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-        </Route>
+          {/* Étudiant Layout */}
+          <Route path="/etudiant" element={<EtudiantLayout />}>
+            <Route path="dashboard" element={<DashboardEtudiant />} />
+            <Route path="mes-emprunts" element={<MesEmprunts />} />
+            <Route path="mes-reservations" element={<MesReservations />} />
+            <Route path="consultations" element={<ConsultationEtudiant />} />
+            <Route path="notifications" element={<NotificationsEtudiant />} />
+            <Route path="profil" element={<ProfilEtudiant />} />
+          </Route>
 
-        {/* Étudiant Layout */}
-        <Route path="/etudiant" element={<EtudiantLayout />}>
-          <Route path="dashboard" element={<DashboardEtudiant />} />
-          <Route path="mes-emprunts" element={<MesEmprunts />} />
-          <Route path="mes-reservations" element={<MesReservations />} />
-          <Route path="consultations" element={<ConsultationEtudiant />} />
-          <Route path="notifications" element={<NotificationsEtudiant />} />
-          <Route path="profil" element={<ProfilEtudiant />} />
-        </Route>
+          {/* Enseignant Layout */}
+          <Route path="/enseignant" element={<EnseignantLayout />}>
+            <Route path="dashboard" element={<DashboardEnseignant />} />
+            <Route path="consultations" element={<ConsultationEnseignant />} />
+            <Route path="depot" element={<DepotDocument />} />
+            <Route path="demande" element={<DemandeAcquisition />} />
+            <Route path="lecture" element={<LectureDocumentEnseignant />} />
+            <Route path="listes" element={<ListesPedagogiques />} />
+            <Route path="mes-emprunts" element={<MesEmpruntsEnseignant />} />
+            <Route path="profil" element={<ProfilEnseignant />} />
+          </Route>
 
-        {/* Enseignant Layout */}
-        <Route path="/enseignant" element={<EnseignantLayout />}>
-          <Route path="dashboard" element={<DashboardEnseignant />} />
-          <Route path="consultations" element={<ConsultationEnseignant />} />
-          <Route path="depot" element={<DepotDocument />} />
-          <Route path="demande" element={<DemandeAcquisition />} />
-          <Route path="lecture" element={<LectureDocumentEnseignant />} />
-          <Route path="listes" element={<ListesPedagogiques />} />
-          <Route path="mes-emprunts" element={<MesEmpruntsEnseignant />} />
-          <Route path="profil" element={<ProfilEnseignant />} />
-        </Route>
+          {/* Pages principales */}
+          <Route path="/main/*" element={<MainLayout />} />
+          <Route path="/explorer" element={<Explorer />} />
+          <Route path="/documents" element={<TousLesDocuments />} />
+          <Route path="/ufr/:ufrId" element={<RedirectionUfr />} />
+          <Route path="/document/:id" element={<ApercuDocument />} />
+          <Route path="/lecture/:id" element={<LireDocument />} />
 
-        {/* Pages principales */}
-        <Route path="/main/*" element={<MainLayout />} />
-        <Route path="/explorer" element={<Explorer />} />
-        <Route path="/documents" element={<TousLesDocuments />} />
-        <Route path="/ufr/:ufrId" element={<RedirectionUfr />} />
-        <Route path="/document/:id" element={<ApercuDocument />} />
-        <Route path="/lecture/:id" element={<LireDocument />} />
+          {/* Aide */}
+          <Route path="/aide/faq" element={<Faq />} />
+          <Route path="/aide/contact" element={<Contact />} />
+          <Route path="/aide/regles" element={<Regles />} />
+          <Route path="/aide/probleme" element={<Probleme />} />
 
-        {/* Aide */}
-        <Route path="/aide/faq" element={<Faq />} />
-        <Route path="/aide/contact" element={<Contact />} />
-        <Route path="/aide/regles" element={<Regles />} />
-        <Route path="/aide/probleme" element={<Probleme />} />
-
-        {/* Redirection par défaut */}
-        <Route path="*" element={<Navigate to="/main/accueil" replace />} />
-      </Routes>
+          {/* Redirection par défaut */}
+          <Route path="*" element={<Navigate to="/main/accueil" replace />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

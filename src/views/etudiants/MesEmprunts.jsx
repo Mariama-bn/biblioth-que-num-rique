@@ -1,7 +1,7 @@
-import React from 'react';
-import { Download, Eye } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+// src/views/etudiants/MesEmprunts.jsx
+import React, { useState } from 'react';
+import { Info } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const empruntsSimules = [
   {
@@ -10,8 +10,7 @@ const empruntsSimules = [
     auteur: 'Dr. Sow',
     dateEmprunt: '2025-07-01',
     dateRetour: '2025-07-15',
-    statut: 'En cours',
-    telechargeable: true,
+    statut: 'En cours'
   },
   {
     id: 'doc2',
@@ -19,8 +18,7 @@ const empruntsSimules = [
     auteur: 'Prof. Ndiaye',
     dateEmprunt: '2025-06-15',
     dateRetour: '2025-06-29',
-    statut: 'Rendu',
-    telechargeable: false,
+    statut: 'Rendu'
   },
   {
     id: 'doc3',
@@ -28,32 +26,13 @@ const empruntsSimules = [
     auteur: 'Mme Diouf',
     dateEmprunt: '2025-06-25',
     dateRetour: '2025-07-09',
-    statut: 'En retard',
-    telechargeable: true,
-  },
+    statut: 'Refusé',
+    motifRefus: 'Vous avez un emprunt non retourné après avertissement.'
+  }
 ];
 
 const MesEmprunts = () => {
-  const navigate = useNavigate();
-
-  const handleLecture = (id) => {
-    navigate(`/lecture/${id}`);
-  };
-
-  const handleTelechargement = (doc) => {
-    if (doc.telechargeable) {
-      // Exemple : lien fictif vers un fichier
-      const lien = `/fichiers/${doc.id}.pdf`;
-      const lienTemp = document.createElement('a');
-      lienTemp.href = lien;
-      lienTemp.download = doc.titre;
-      document.body.appendChild(lienTemp);
-      lienTemp.click();
-      document.body.removeChild(lienTemp);
-    } else {
-      alert("❌ Ce document n'est pas disponible au téléchargement.");
-    }
-  };
+  const [motifVisibleId, setMotifVisibleId] = useState(null);
 
   return (
     <motion.div
@@ -73,7 +52,6 @@ const MesEmprunts = () => {
               <th className="px-4 py-3">Date d'emprunt</th>
               <th className="px-4 py-3">Date de retour</th>
               <th className="px-4 py-3">Statut</th>
-              <th className="px-4 py-3 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -84,39 +62,62 @@ const MesEmprunts = () => {
                 <td className="px-4 py-3 text-gray-600">{doc.dateEmprunt}</td>
                 <td className="px-4 py-3 text-gray-600">{doc.dateRetour}</td>
                 <td className="px-4 py-3">
-                  <span
-                    className={`px-2 py-1 rounded text-xs font-semibold ${
+                  {doc.statut === 'Refusé' ? (
+                    <div className="flex items-center gap-2">
+                      <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-semibold">Refusé</span>
+                      <button
+                        onClick={() => setMotifVisibleId(doc.id)}
+                        className="text-red-600 hover:text-red-800"
+                        title="Voir le motif du refus"
+                      >
+                        <Info size={16} />
+                      </button>
+                    </div>
+                  ) : (
+                    <span className={`px-2 py-1 rounded text-xs font-semibold ${
                       doc.statut === 'En cours'
                         ? 'bg-blue-100 text-blue-700'
                         : doc.statut === 'Rendu'
                         ? 'bg-green-100 text-green-700'
                         : 'bg-red-100 text-red-700'
-                    }`}
-                  >
-                    {doc.statut}
-                  </span>
-                </td>
-                <td className="px-4 py-3 flex justify-center space-x-2">
-                  <button
-                    onClick={() => handleLecture(doc.id)}
-                    className="text-blue-600 hover:text-blue-800"
-                    title="Lire"
-                  >
-                    <Eye size={18} />
-                  </button>
-                  <button
-                    onClick={() => handleTelechargement(doc)}
-                    className="text-green-600 hover:text-green-800"
-                    title="Télécharger"
-                  >
-                    <Download size={18} />
-                  </button>
+                    }`}>
+                      {doc.statut}
+                    </span>
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <AnimatePresence>
+        {motifVisibleId && (
+          <motion.div
+            key="motif-popup"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50"
+          >
+            <div className="bg-white rounded-lg p-6 w-full max-w-md mx-auto shadow-xl text-center">
+              <h3 className="text-lg font-bold text-red-600 mb-4">⛔ Emprunt refusé</h3>
+              <p className="text-gray-700 text-sm mb-4">
+                {
+                  empruntsSimules.find((e) => e.id === motifVisibleId)?.motifRefus ||
+                  'Aucun motif précisé.'
+                }
+              </p>
+              <button
+                onClick={() => setMotifVisibleId(null)}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+              >
+                Fermer
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

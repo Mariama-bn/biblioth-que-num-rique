@@ -1,82 +1,120 @@
-// ✅ Login.jsx — Authentification UIDT avec vérification locale
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Mail, Lock, LogIn } from "lucide-react";
-import logoUIDT from "../../assets/img/brand/logo-uidt2.jpeg";
+import React, { useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext'; // ✅ Corrigé le chemin
+import { Navigate, useNavigate } from 'react-router-dom';
+import { BookOpen, Lock, User, Eye, EyeOff } from 'lucide-react';
+import logoUIDT from '../../assets/img/brand/logo-uidt2.jpeg'; // ✅ Ton logo
 
 const Login = () => {
-  const navigate = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    motDePasse: ''
+  });
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { user, login } = useAuth();
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    if (error) setError("");
-  };
+  if (user) {
+    return <Navigate to="/main/accueil" replace />;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    if (!form.email || !form.password) {
-      setError("Veuillez remplir tous les champs.");
-      setIsLoading(false);
-      return;
+    setLoading(true);
+    setError('');
+
+    const result = await login(formData);
+
+    if (result.success) {
+      localStorage.setItem("utilisateurConnecte", JSON.stringify(result.user)); // ✅ Enregistrer l'utilisateur
+      navigate('/main/accueil'); // ✅ Redirection vers l’accueil
+    } else {
+      setError(result.error || "Erreur de connexion.");
     }
 
-    // Vérifie les identifiants avec ceux du localStorage
-    const userData = JSON.parse(localStorage.getItem("utilisateur"));
-    if (!userData || form.email !== userData.email || form.password !== userData.password) {
-      setError("Identifiants incorrects. Veuillez réessayer.");
-      setIsLoading(false);
-      return;
-    }
-
-    // Connexion réussie
-    localStorage.setItem("utilisateurConnecte", JSON.stringify(userData));
-    navigate("/interface-principale");
-    setIsLoading(false);
+    setLoading(false);
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white p-10 rounded-3xl shadow-2xl">
-        <div className="text-center mb-6">
-          <div className="w-20 h-20 mx-auto mb-4 bg-white border-4 border-blue-900 rounded-full flex items-center justify-center shadow-md">
-            <img src={logoUIDT} alt="UIDT" className="w-14 h-14 rounded-full object-cover" />
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 hover:scale-105">
+        <div className="text-center mb-8">
+          <div className="mx-auto w-24 h-24 bg-white border-4 border-blue-900 rounded-full flex items-center justify-center mb-4 shadow-md">
+            <img src={logoUIDT} alt="UIDT" className="w-16 h-16 rounded-full object-cover" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-800">Connexion</h2>
-          <p className="text-slate-500 text-sm">Accédez à votre espace UIDT</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Connexion</h1>
+          <p className="text-gray-600">Accédez à votre espace UIDT</p>
         </div>
 
-        {error && <div className="text-red-600 text-center font-medium mb-4">{error}</div>}
-
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-slate-700">Email universitaire</label>
-            <input type="email" name="email" value={form.email} onChange={handleChange} className="mt-1 w-full rounded-md border border-slate-300 px-4 py-2.5" placeholder="prenom.nom@uidt.edu.sn" />
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Adresse email
+            </label>
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                placeholder="prenom.nom@uidt.edu.sn"
+              />
+            </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700">Mot de passe</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Mot de passe
+            </label>
             <div className="relative">
-              <input type={showPassword ? "text" : "password"} name="password" value={form.password} onChange={handleChange} className="mt-1 w-full rounded-md border border-slate-300 px-4 py-2.5 pr-10" />
-              <button type="button" className="absolute top-1/2 right-3 -translate-y-1/2" onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                value={formData.motDePasse}
+                onChange={(e) => setFormData({ ...formData, motDePasse: e.target.value })}
+                className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
           </div>
 
-          <button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-blue-900 to-green-600 text-white font-semibold py-3 rounded-lg shadow-md hover:scale-[1.01] transition-transform">
-            {isLoading ? "Connexion..." : <><LogIn size={16} className="inline mr-2" />Se connecter</>}
-          </button>
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm">
+              {error}
+            </div>
+          )}
 
-          <p className="text-sm text-center text-slate-500 mt-4">
-            Nouveau sur la plateforme ?
-            <span onClick={() => navigate("/auth/register")} className="text-blue-700 font-semibold cursor-pointer ml-1">Créer un compte</span>
-          </p>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-blue-900 to-green-600 text-white py-3 px-4 rounded-lg font-medium hover:scale-105 transition-all duration-200"
+          >
+            {loading ? "Connexion..." : "Se connecter"}
+          </button>
         </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            Nouveau sur la plateforme ?
+            <span
+              onClick={() => navigate("/auth/register")}
+              className="text-blue-700 font-semibold cursor-pointer ml-1"
+            >
+              Créer un compte
+            </span>
+          </p>
+        </div>
       </div>
     </div>
   );
