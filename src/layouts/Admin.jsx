@@ -19,7 +19,6 @@ const adminLinks = [
   { to: '/admin/utilisateurs', label: 'Utilisateurs', icon: <Users size={18} /> },
   { to: '/admin/documents', label: 'Documents', icon: <FileText size={18} /> },
   { to: '/admin/emprunts', label: 'Emprunts', icon: <BookOpen size={18} /> },
-  { to: '/admin/reservations', label: 'Réservations', icon: <CalendarCheck size={18} /> },
   { to: '/admin/demandesacquisitions', label: 'Demandes acquisitions', icon: <FilePlus size={18} /> },
   { to: '/admin/statistiques', label: 'Statistiques', icon: <BarChart size={18} /> },
   { to: '/admin/parametres', label: 'Paramètres', icon: <Settings size={18} /> },

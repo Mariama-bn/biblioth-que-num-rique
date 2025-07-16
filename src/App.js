@@ -22,7 +22,6 @@ import Dashboard from "./views/admin/Dashboard";
 import GestionUtilisateurs from "./views/admin/GestionUtilisateurs";
 import GestionDocuments from "./views/admin/GestionDocuments";
 import Emprunts from "./views/admin/Emprunts";
-import Reservations from "./views/admin/Reservations";
 import DemandesAcquisition from "./views/admin/DemandesAcquisition";
 import RapportsStatistiques from "./views/admin/RapportsStatistiques";
 import Parametres from "./views/admin/Parametres";
@@ -71,7 +70,6 @@ function App() {
             <Route path="utilisateurs" element={<GestionUtilisateurs />} />
             <Route path="documents" element={<GestionDocuments />} />
             <Route path="emprunts" element={<Emprunts />} />
-            <Route path="reservations" element={<Reservations />} />
             <Route path="demandesacquisitions" element={<DemandesAcquisition />} />
             <Route path="statistiques" element={<RapportsStatistiques />} />
             <Route path="parametres" element={<Parametres />} />
