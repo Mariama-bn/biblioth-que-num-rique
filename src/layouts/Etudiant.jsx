@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'; // 👈 animation importée ici
 
 const navLinks = [
   { to: '/etudiant/dashboard', label: 'Dashboard', icon: <Home size={18} /> },
+  { to: '/etudiant/documents', label: 'documents', icon: <Home size={18} /> },
   { to: '/etudiant/mes-emprunts', label: 'Mes emprunts', icon: <BookOpen size={18} /> },
   { to: '/etudiant/mes-reservations', label: 'Mes réservations', icon: <BookOpen size={18} /> },
   { to: '/etudiant/consultations', label: 'Mes consultations', icon: <BookOpen size={18} /> },

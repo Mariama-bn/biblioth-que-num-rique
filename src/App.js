@@ -66,6 +66,7 @@ function App() {
         <Routes>
           {/* Admin Layout */}
           <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="utilisateurs" element={<GestionUtilisateurs />} />
             <Route path="documents" element={<GestionDocuments />} />
@@ -84,7 +85,9 @@ function App() {
 
           {/* Étudiant Layout */}
           <Route path="/etudiant" element={<EtudiantLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<DashboardEtudiant />} />
+            <Route path="documents" element={<TousLesDocuments />} />
             <Route path="mes-emprunts" element={<MesEmprunts />} />
             <Route path="mes-reservations" element={<MesReservations />} />
             <Route path="consultations" element={<ConsultationEtudiant />} />
