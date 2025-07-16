@@ -22,7 +22,6 @@ import Dashboard from "./views/admin/Dashboard";
 import GestionUtilisateurs from "./views/admin/GestionUtilisateurs";
 import GestionDocuments from "./views/admin/GestionDocuments";
 import Emprunts from "./views/admin/Emprunts";
-import Reservations from "./views/admin/Reservations";
 import DemandesAcquisition from "./views/admin/DemandesAcquisition";
 import RapportsStatistiques from "./views/admin/RapportsStatistiques";
 import Parametres from "./views/admin/Parametres";
@@ -30,10 +29,10 @@ import Parametres from "./views/admin/Parametres";
 // Étudiant Pages
 import DashboardEtudiant from './views/etudiants/DashboardEtudiant';
 import MesEmprunts from './views/etudiants/MesEmprunts';
-import MesReservations from './views/etudiants/MesReservations';
 import ConsultationEtudiant from './views/etudiants/ConsultationEtudiant';
 import NotificationsEtudiant from './views/etudiants/NotificationsEtudiant';
 import ProfilEtudiant from './views/etudiants/ProfilEtudiant';
+import FavorisEtudiants from './views/etudiants/FavorisEtudiants';
 
 // Enseignant Pages
 import DashboardEnseignant from './views/enseignants/DashboardEnseignant';
@@ -44,6 +43,7 @@ import LectureDocumentEnseignant from './views/enseignants/LectureDocumentEnseig
 import ListesPedagogiques from './views/enseignants/ListesPedagogiques';
 import MesEmpruntsEnseignant from './views/enseignants/MesEmpruntsEnseignant';
 import ProfilEnseignant from './views/enseignants/ProfilEnseignant';
+import FavorisEnseignants from './views/enseignants/FavorisEnseignants';
 
 // Main Pages
 import Explorer from './views/Main/Explorer';
@@ -71,7 +71,6 @@ function App() {
             <Route path="utilisateurs" element={<GestionUtilisateurs />} />
             <Route path="documents" element={<GestionDocuments />} />
             <Route path="emprunts" element={<Emprunts />} />
-            <Route path="reservations" element={<Reservations />} />
             <Route path="demandesacquisitions" element={<DemandesAcquisition />} />
             <Route path="statistiques" element={<RapportsStatistiques />} />
             <Route path="parametres" element={<Parametres />} />
@@ -89,10 +88,10 @@ function App() {
             <Route path="dashboard" element={<DashboardEtudiant />} />
             <Route path="documents" element={<TousLesDocuments />} />
             <Route path="mes-emprunts" element={<MesEmprunts />} />
-            <Route path="mes-reservations" element={<MesReservations />} />
             <Route path="consultations" element={<ConsultationEtudiant />} />
             <Route path="notifications" element={<NotificationsEtudiant />} />
             <Route path="profil" element={<ProfilEtudiant />} />
+            <Route path="favoris-etudiants" element={<FavorisEtudiants />} />
           </Route>
 
           {/* Enseignant Layout */}
@@ -105,6 +104,7 @@ function App() {
             <Route path="listes" element={<ListesPedagogiques />} />
             <Route path="mes-emprunts" element={<MesEmpruntsEnseignant />} />
             <Route path="profil" element={<ProfilEnseignant />} />
+            <Route path="favoris-enseignants" element={<FavorisEnseignants />} />
           </Route>
 
           {/* Pages principales */}

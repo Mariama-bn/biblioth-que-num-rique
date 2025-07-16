@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaFileUpload, FaImage, FaBook } from "react-icons/fa";
+import { IoMdClose } from "react-icons/io";
 
 const domaines = [
   "Développement & Administration d'applications",
@@ -33,21 +34,12 @@ const GestionDocuments = () => {
       fichierNom: "droit-constitutionnel.pdf",
       imageNom: "droit.jpg",
     },
-    {
-      titre: "Santé communautaire : guide pratique",
-      categorie: "Santé Communautaire",
-      acces: "Public",
-      auteur: "Moussa Ba",
-      isbn: "",
-      description: "Manuel pour les agents de santé communautaire.",
-      motsCles: "Santé, Communauté, Guide",
-      fichierNom: "sante-communautaire.pdf",
-      imageNom: "sante.jpg",
-    },
   ]);
 
   const [search, setSearch] = useState("");
   const [selectedDomaine, setSelectedDomaine] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [formDataModern, setFormDataModern] = useState({
     titre: "",
     categorie: "",
@@ -86,6 +78,7 @@ const GestionDocuments = () => {
     };
 
     setDocuments([...documents, newDoc]);
+    setIsModalOpen(false);
 
     setFormDataModern({
       titre: "",
@@ -112,182 +105,196 @@ const GestionDocuments = () => {
   });
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">Gestion des documents</h2>
-        <p className="text-gray-600">Ajoutez, modifiez ou consultez les documents de la bibliothèque.</p>
+    <div className="p-6 max-w-7xl mx-auto relative">
+      <div className="mb-8 flex justify-between items-center">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">Gestion des documents</h2>
+          <p className="text-gray-600">Ajoutez, modifiez ou consultez les documents de la bibliothèque.</p>
+        </div>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
+        >
+          + Ajouter un document
+        </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="mb-10 bg-white shadow-md rounded-lg p-6">
-        <h3 className="text-xl font-semibold text-green-600 mb-6 flex items-center gap-2">
-          <FaBook /> Ajouter une ressource
-        </h3>
+      {/* === MODAL FORMULAIRE === */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-start pt-10 overflow-auto">
+          <div className="bg-white rounded-lg shadow-lg max-w-4xl w-full p-6 relative mx-4">
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-600 hover:text-red-600"
+            >
+              <IoMdClose size={24} />
+            </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="titre" className="block text-sm font-medium text-gray-700">
-                Titre <span className="text-red-500">*</span>
-              </label>
-              <input
-                id="titre"
-                name="titre"
-                value={formDataModern.titre}
-                onChange={handleInputChange}
-                required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                placeholder="Titre de la ressource"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Catégorie</label>
-                <select
-                  name="categorie"
-                  value={formDataModern.categorie}
-                  onChange={handleInputChange}
-                  required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-green-500 focus:border-green-500"
+            {/* === Ton formulaire copié-collé ici sans modification === */}
+            <form onSubmit={handleSubmit}>
+              <h3 className="text-xl font-semibold text-green-600 mb-6 flex items-center gap-2">
+                <FaBook /> Ajouter une ressource
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="titre" className="block text-sm font-medium text-gray-700">
+                      Titre <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      id="titre"
+                      name="titre"
+                      value={formDataModern.titre}
+                      onChange={handleInputChange}
+                      required
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                      placeholder="Titre de la ressource"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Catégorie</label>
+                      <select
+                        name="categorie"
+                        value={formDataModern.categorie}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                      >
+                        <option value="">Sélectionner</option>
+                        {domaines.map((dom, i) => (
+                          <option key={i} value={dom}>
+                            {dom}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Accès</label>
+                      <select
+                        name="acces"
+                        value={formDataModern.acces}
+                        onChange={handleInputChange}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                      >
+                        <option value="Public">🌐 Public</option>
+                        <option value="Privé">🔒 Privé</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Auteur</label>
+                      <input
+                        name="auteur"
+                        value={formDataModern.auteur}
+                        onChange={handleInputChange}
+                        placeholder="Nom de l'auteur"
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">ISBN</label>
+                      <input
+                        name="isbn"
+                        value={formDataModern.isbn}
+                        onChange={handleInputChange}
+                        placeholder="ISBN (optionnel)"
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Description <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      name="description"
+                      value={formDataModern.description}
+                      onChange={handleInputChange}
+                      required
+                      rows={4}
+                      placeholder="Décrivez la ressource..."
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Mots-clés <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      name="motsCles"
+                      value={formDataModern.motsCles}
+                      onChange={handleInputChange}
+                      required
+                      placeholder="Mots-clés séparés par des virgules"
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-6">
+                  <div className="p-4 border border-dashed rounded-md text-center">
+                    <h4 className="text-green-700 mb-2 flex items-center justify-center gap-2">
+                      <FaFileUpload /> Fichier principal <span className="text-red-500">*</span>
+                    </h4>
+                    <input
+                      type="file"
+                      name="fichier"
+                      accept=".pdf,.doc,.docx,.txt"
+                      onChange={handleFileChange}
+                      required
+                      className="mx-auto"
+                    />
+                    <small className="block mt-2 text-gray-500">PDF, DOCX, DOC, TXT (max. 50MB)</small>
+                  </div>
+                  <div className="p-4 border border-dashed rounded-md text-center">
+                    <h5 className="text-yellow-600 mb-2 flex items-center justify-center gap-2">
+                      <FaImage /> Image (optionnel)
+                    </h5>
+                    <input
+                      type="file"
+                      name="image"
+                      accept=".jpg,.jpeg,.png,.webp"
+                      onChange={handleFileChange}
+                      className="mx-auto"
+                    />
+                    <small className="block mt-2 text-gray-500">JPEG, PNG, WebP (max. 10MB)</small>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  type="reset"
+                  onClick={() =>
+                    setFormDataModern({
+                      titre: "",
+                      categorie: "",
+                      acces: "Public",
+                      auteur: "",
+                      isbn: "",
+                      description: "",
+                      motsCles: "",
+                      fichier: null,
+                      image: null,
+                    })
+                  }
+                  className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition"
                 >
-                  <option value="">Sélectionner</option>
-                  {domaines.map((dom, i) => (
-                    <option key={i} value={dom}>
-                      {dom}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Accès</label>
-                <select
-                  name="acces"
-                  value={formDataModern.acces}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
                 >
-                  <option value="Public">🌐 Public</option>
-                  <option value="Privé">🔒 Privé</option>
-                </select>
+                  Enregistrer
+                </button>
               </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Auteur</label>
-                <input
-                  name="auteur"
-                  value={formDataModern.auteur}
-                  onChange={handleInputChange}
-                  placeholder="Nom de l'auteur"
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">ISBN</label>
-                <input
-                  name="isbn"
-                  value={formDataModern.isbn}
-                  onChange={handleInputChange}
-                  placeholder="ISBN (optionnel)"
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Description <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                name="description"
-                value={formDataModern.description}
-                onChange={handleInputChange}
-                required
-                rows={4}
-                placeholder="Décrivez la ressource..."
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-green-500 focus:border-green-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Mots-clés <span className="text-red-500">*</span>
-              </label>
-              <input
-                name="motsCles"
-                value={formDataModern.motsCles}
-                onChange={handleInputChange}
-                required
-                placeholder="Mots-clés séparés par des virgules"
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-green-500 focus:border-green-500"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="p-4 border border-dashed rounded-md text-center">
-              <h4 className="text-green-700 mb-2 flex items-center justify-center gap-2">
-                <FaFileUpload /> Fichier principal <span className="text-red-500">*</span>
-              </h4>
-              <input
-                type="file"
-                name="fichier"
-                accept=".pdf,.doc,.docx,.txt"
-                onChange={handleFileChange}
-                required
-                className="mx-auto"
-              />
-              <small className="block mt-2 text-gray-500">PDF, DOCX, DOC, TXT (max. 50MB)</small>
-            </div>
-
-            <div className="p-4 border border-dashed rounded-md text-center">
-              <h5 className="text-yellow-600 mb-2 flex items-center justify-center gap-2">
-                <FaImage /> Image (optionnel)
-              </h5>
-              <input
-                type="file"
-                name="image"
-                accept=".jpg,.jpeg,.png,.webp"
-                onChange={handleFileChange}
-                className="mx-auto"
-              />
-              <small className="block mt-2 text-gray-500">JPEG, PNG, WebP (max. 10MB)</small>
-            </div>
+            </form>
           </div>
         </div>
+      )}
 
-        <div className="mt-6 flex justify-end gap-3">
-          <button
-            type="reset"
-            onClick={() =>
-              setFormDataModern({
-                titre: "",
-                categorie: "",
-                acces: "Public",
-                auteur: "",
-                isbn: "",
-                description: "",
-                motsCles: "",
-                fichier: null,
-                image: null,
-              })
-            }
-            className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition"
-          >
-            Annuler
-          </button>
-          <button
-            type="submit"
-            className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-          >
-            Enregistrer
-          </button>
-        </div>
-      </form>
-
+      {/* Barre de recherche et filtre */}
       <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-start gap-4">
         <input
           type="text"
@@ -310,6 +317,7 @@ const GestionDocuments = () => {
         </select>
       </div>
 
+      {/* Tableau */}
       <div className="overflow-x-auto bg-white rounded shadow">
         <table className="min-w-full text-left text-gray-700">
           <thead className="bg-green-100 border-b border-green-300">
@@ -340,10 +348,7 @@ const GestionDocuments = () => {
                   <td className="px-4 py-3">{doc.acces}</td>
                   <td className="px-4 py-3">{doc.auteur}</td>
                   <td className="px-4 py-3">{doc.isbn}</td>
-                  <td
-                    className="px-4 py-3 max-w-xs truncate"
-                    title={doc.description}
-                  >
+                  <td className="px-4 py-3 max-w-xs truncate" title={doc.description}>
                     {doc.description}
                   </td>
                   <td className="px-4 py-3">{doc.motsCles}</td>
