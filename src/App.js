@@ -38,12 +38,12 @@ import FavorisEtudiants from './views/etudiants/FavorisEtudiants';
 import DashboardEnseignant from './views/enseignants/DashboardEnseignant';
 import ConsultationEnseignant from './views/enseignants/ConsultationEnseignant';
 import DepotDocument from './views/enseignants/DepotDocument';
-import DemandeAcquisition from './views/enseignants/DemandeAcquisition';
 import LectureDocumentEnseignant from './views/enseignants/LectureDocumentEnseignant';
 import ListesPedagogiques from './views/enseignants/ListesPedagogiques';
 import MesEmpruntsEnseignant from './views/enseignants/MesEmpruntsEnseignant';
 import ProfilEnseignant from './views/enseignants/ProfilEnseignant';
 import FavorisEnseignants from './views/enseignants/FavorisEnseignants';
+
 
 // Main Pages
 import Explorer from './views/Main/Explorer';
@@ -96,7 +96,6 @@ function App() {
             <Route path="dashboard" element={<DashboardEnseignant />} />
             <Route path="consultations" element={<ConsultationEnseignant />} />
             <Route path="depot" element={<DepotDocument />} />
-            <Route path="demande" element={<DemandeAcquisition />} />
             <Route path="lecture" element={<LectureDocumentEnseignant />} />
             <Route path="listes" element={<ListesPedagogiques />} />
             <Route path="mes-emprunts" element={<MesEmpruntsEnseignant />} />

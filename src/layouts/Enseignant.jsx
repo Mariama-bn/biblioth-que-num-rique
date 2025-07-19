@@ -16,7 +16,6 @@ const menu = [
   { label: "Tableau de bord", path: "/enseignant/dashboard", icon: <BookOpen size={18} /> },
   { label: "Consultations", path: "/enseignant/consultations", icon: <Eye size={18} /> },
   { label: "Dépôt de documents", path: "/enseignant/depot", icon: <FileText size={18} /> },
-  { label: "Demandes d’acquisition", path: "/enseignant/demande", icon: <FolderOpen size={18} /> },
   { label: "Lecture", path: "/enseignant/lecture", icon: <BookOpen size={18} /> },
   { label: "Listes pédagogiques", path: "/enseignant/listes", icon: <ClipboardList size={18} /> },
   { label: "Mes emprunts", path: "/enseignant/mes-emprunts", icon: <BookOpen size={18} /> },
@@ -40,7 +39,7 @@ const EnseignantLayout = () => {
 
       <div className="flex flex-1">
         {/* ✅ Sidebar */}
-        <aside className="w-64 bg-blue-400 text-white shadow-lg flex flex-col justify-between">
+        <aside className="w-64 bg-green-600 text-white p-6 flex flex-col justify-between shadow-lg">
           <div>
             <div className="p-6 border-b border-blue-300">
               <h1 className="text-xl font-bold">UIDT | Enseignant</h1>
@@ -65,13 +64,7 @@ const EnseignantLayout = () => {
           </div>
 
           {/* ✅ Déconnexion dans le sidebar */}
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 text-sm bg-red-600 hover:bg-red-700 text-white px-6 py-3"
-          >
-            <LogOut size={16} />
-            Déconnexion
-          </button>
+        
         </aside>
 
         {/* ✅ Contenu principal */}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { BookOpen, Bell, User, Home, LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -15,6 +15,7 @@ const navLinks = [
 const EtudiantLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -22,43 +23,58 @@ const EtudiantLayout = () => {
     navigate('/auth/login');
   };
 
+  // Filtrage des liens du menu
+  const filteredLinks = navLinks.filter((link) =>
+    link.label.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
       <aside className="w-64 bg-green-600 text-white p-6 flex flex-col justify-between shadow-lg">
         <div>
           <h2 className="text-2xl font-bold mb-8">Espace Étudiant</h2>
+
+          {/* Résultat de la recherche */}
           <nav className="space-y-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`flex items-center space-x-2 px-4 py-2 rounded hover:bg-green-700 transition ${
-                  location.pathname === link.to ? 'bg-green-700 font-semibold' : ''
-                }`}
-              >
-                {link.icon}
-                <span>{link.label}</span>
-              </Link>
-            ))}
+            {filteredLinks.length > 0 ? (
+              filteredLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded hover:bg-green-700 transition ${
+                    location.pathname === link.to ? 'bg-green-700 font-semibold' : ''
+                  }`}
+                >
+                  {link.icon}
+                  <span>{link.label}</span>
+                </Link>
+              ))
+            ) : (
+              <p className="text-sm text-gray-200">Aucun résultat trouvé</p>
+            )}
           </nav>
         </div>
-
-        <button
-          onClick={handleLogout}
-          className="flex items-center space-x-2 px-4 py-2 rounded bg-red-600 hover:bg-red-700 transition text-white mt-8"
-        >
-          <LogOut size={18} />
-          <span>Déconnexion</span>
-        </button>
       </aside>
 
       {/* Contenu principal */}
       <div className="flex-1 flex flex-col">
         {/* Navbar étudiant */}
         <header className="h-16 bg-white border-b border-gray-200 shadow-sm px-6 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-green-700">Bibliothèque UADB - Espace Étudiant</h1>
-          <div className="flex items-center gap-3">
+          <h1 className="text-xl font-bold text-green-700">
+            Bibliothèque UIDT | Espace Étudiant
+          </h1>
+
+          <div className="flex items-center gap-4">
+            {/* Barre de recherche */}
+            <input
+              type="text"
+              placeholder="Rechercher dans le menu..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+
             <User className="text-gray-600" />
             <button
               onClick={handleLogout}

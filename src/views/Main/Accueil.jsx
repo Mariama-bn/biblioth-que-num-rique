@@ -7,11 +7,28 @@ import { allDocuments } from '../../data/documents';
 // ✅ Import de l’image de fond
 import headerImg from '../../assets/img/theme/img-biblio-uidt4.jpg';
 
+// ✅ Images spécifiques aux documents
+import img1 from '../../assets/img/theme/Atlas-d-anatomie-humaine-Frank-H-Netter.jpeg';
+import img2 from '../../assets/img/theme/humaine-physiologie-lauree-showood.jpeg';
+import img3 from '../../assets/img/theme/pharmacocinetique.jpeg';
+import img4 from '../../assets/img/theme/Biochimie.jpeg';
+import img5 from '../../assets/img/theme/genetique-humaine.jpeg';
+import img6 from '../../assets/img/theme/biologie.jpeg';
+
+const imageMap = {
+  doc1: img1,
+  doc2: img2,
+  doc3: img3,
+  doc4: img4,
+  doc5: img5,
+  doc6: img6,
+};
+
 const ufrs = [
-  { id: 'sante', name: 'UFR Santé', color: 'from-blue-700 to-blue-900' },
-  { id: 'sciences', name: 'UFR Sciences', color: 'from-blue-700 to-blue-900' },
-  { id: 'lettres', name: 'UFR Lettres', color: 'from-blue-700 to-blue-900' },
-  { id: 'economie', name: 'UFR Économie', color: 'from-blue-700 to-blue-900' }
+  { id: 'sante', name: 'UFR Science de la Santé', color: 'from-blue-700 to-blue-900' },
+  { id: 'economie', name: 'UFR Sciences Economiques et Sociales', color: 'from-blue-700 to-blue-900' },
+  { id: 'technologie', name: 'UFR Sciences et Technologie', color: 'from-blue-700 to-blue-900' },
+  { id: 'ingenieurie', name: 'UFR Science Ingenieurie', color: 'from-blue-700 to-blue-900' }
 ];
 
 const generateFakeDocuments = (ufrId, count, existingIds) => {
@@ -89,7 +106,7 @@ const Accueil = () => {
         )}
       </header>
 
-      {/* ✅ Bannière avec image (pas de bouton créer compte) */}
+      {/* ✅ Bannière avec image */}
       <section className="relative h-[400px] w-full overflow-hidden">
         <img
           src={headerImg}
@@ -139,8 +156,18 @@ const Accueil = () => {
                     transition={{ delay: i * 0.1 }}
                     className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg"
                   >
-                    <div className="h-40 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                      <BookOpen className="text-white w-10 h-10" />
+                    <div className="h-40 w-full">
+                      {imageMap[doc.id] ? (
+                        <img
+                          src={imageMap[doc.id]}
+                          alt={doc.title}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-full w-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                          <BookOpen className="text-white w-10 h-10" />
+                        </div>
+                      )}
                     </div>
                     <div className="p-4">
                       <h3 className="font-bold text-gray-800 mb-1 truncate">{doc.title}</h3>
@@ -160,7 +187,6 @@ const Accueil = () => {
         );
       })}
 
-      {/* Appel à l’action final (on peut l’enlever si tu veux aussi) */}
       <section className="py-16 bg-green-600 text-white text-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <h2 className="text-3xl font-bold mb-4">Rejoignez la communauté UIDT</h2>

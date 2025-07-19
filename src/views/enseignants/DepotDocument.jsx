@@ -86,36 +86,7 @@ const DepotDocument = () => {
           ></textarea>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">UFR</label>
-            <select
-              name="ufr"
-              value={formData.ufr}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 px-3 py-2 rounded bg-white focus:outline-none focus:ring focus:ring-blue-400"
-            >
-              <option value="">-- Choisir une UFR --</option>
-              <option value="sante">UFR Santé</option>
-              <option value="sciences">UFR Sciences</option>
-              <option value="lettres">UFR Lettres</option>
-              <option value="economie">UFR Économie</option>
-            </select>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Filière</label>
-            <input
-              type="text"
-              name="filiere"
-              value={formData.filiere}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring focus:ring-blue-400"
-            />
-          </div>
-        </div>
 
         <div>
           <label className="block text-sm font-medium mb-1">Fichier PDF</label>
