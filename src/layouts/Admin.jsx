@@ -16,7 +16,8 @@ import AdminNavbar from '../components/Navbars/AdminNavbar';
 
 const adminLinks = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
-  { to: '/admin/utilisateurs', label: 'Utilisateurs', icon: <Users size={18} /> },
+  { to: '/admin/enseignants', label: 'Enseignants', icon: <Users size={18} /> },
+  { to: '/admin/etudiants', label: 'Etudiants', icon: <Users size={18} /> },
   { to: '/admin/documents', label: 'Documents', icon: <FileText size={18} /> },
   { to: '/admin/emprunts', label: 'Emprunts', icon: <BookOpen size={18} /> },
   { to: '/admin/statistiques', label: 'Statistiques', icon: <BarChart size={18} /> },

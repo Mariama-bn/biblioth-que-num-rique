@@ -19,7 +19,8 @@ import Register from "./views/Auth/Register";
 
 // Admin Pages
 import Dashboard from "./views/admin/Dashboard";
-import GestionUtilisateurs from "./views/admin/GestionUtilisateurs";
+import GestionEnseignants from "./views/admin/GestionEnseignants";
+import GestionEtudiants from "./views/admin/GestionEtudiants";
 import GestionDocuments from "./views/admin/GestionDocuments";
 import Emprunts from "./views/admin/Emprunts";
 import DemandesAcquisition from "./views/admin/DemandesAcquisition";
@@ -66,8 +67,10 @@ function App() {
         <Routes>
           {/* Admin Layout */}
           <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="utilisateurs" element={<GestionUtilisateurs />} />
+            <Route path="enseignants" element={<GestionEnseignants />} />
+            <Route path="etudiants" element={<GestionEtudiants />} />
             <Route path="documents" element={<GestionDocuments />} />
             <Route path="emprunts" element={<Emprunts />} />
             <Route path="demandesacquisitions" element={<DemandesAcquisition />} />
@@ -83,7 +86,9 @@ function App() {
 
           {/* Étudiant Layout */}
           <Route path="/etudiant" element={<EtudiantLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<DashboardEtudiant />} />
+            <Route path="documents" element={<TousLesDocuments />} />
             <Route path="mes-emprunts" element={<MesEmprunts />} />
             <Route path="consultations" element={<ConsultationEtudiant />} />
             <Route path="notifications" element={<NotificationsEtudiant />} />

@@ -26,13 +26,20 @@ const Login = () => {
 
     const result = await login(formData);
 
+    
     if (result.success) {
-      localStorage.setItem("utilisateurConnecte", JSON.stringify(result.user)); // ✅ Enregistrer l'utilisateur
-      navigate('/main/accueil'); // ✅ Redirection vers l’accueil
+      // Redirection après connexion réussie
+      const userRole = result.user?.role;
+      
+      if (['ADMIN'].includes(userRole)) {
+        navigate('/admin');
+      } else {
+        navigate('/etudiant');
+      }
     } else {
-      setError(result.error || "Erreur de connexion.");
+      setError(result.error);
     }
-
+    
     setLoading(false);
   };
 

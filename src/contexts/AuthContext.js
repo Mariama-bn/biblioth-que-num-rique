@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
+import axios from 'axios';
 // Création du contexte
 const AuthContext = createContext();
 
@@ -11,26 +12,33 @@ export const AuthProvider = ({ children }) => {
   });
 
   // Fonction de connexion
-  const login = async ({ email, motDePasse }) => {
-    const userLocal = JSON.parse(localStorage.getItem("utilisateur"));
-
-    if (!userLocal) {
-      return { success: false, error: "Aucun compte enregistré. Veuillez vous inscrire." };
+ 
+  const login = async (credentials) => {
+    try {
+      const response = await axios.post('http://localhost:2000/api/users/login', credentials);
+      
+      
+      const { data } = response;
+      const { user, accessToken } = data;
+      
+      // Sauvegarder le token et les données utilisateur
+      localStorage.setItem('token', accessToken);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      // Configurer axios pour les futures requêtes
+      axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      // Mettre à jour l'état
+      setUser(user);
+      
+      return { success: true, user };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Erreur de connexion' 
+      };
     }
-
-    // Vérification des identifiants
-    if (
-      email === userLocal.email &&
-      motDePasse === userLocal.password
-    ) {
-      localStorage.setItem("utilisateurConnecte", JSON.stringify(userLocal));
-      setUser(userLocal);
-      return { success: true, user: userLocal };
-    }
-
-    return { success: false, error: "Email ou mot de passe incorrect." };
   };
-
   // Fonction de déconnexion
   const logout = () => {
     localStorage.removeItem("utilisateurConnecte");

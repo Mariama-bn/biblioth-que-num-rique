@@ -3,29 +3,31 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, X, Pencil, ToggleLeft, ToggleRight } from 'lucide-react';
 
 const initialUsers = [
-  { id: 1, prenom: 'Ali', nom: 'Fall', email: 'ali.fall@uadb.edu.sn', role: 'Étudiant', actif: true },
-  { id: 2, prenom: 'Fatou', nom: 'Diop', email: 'fatou.diop@uadb.edu.sn', role: 'Enseignant', actif: true },
-  { id: 3, prenom: 'Moussa', nom: 'Ba', email: 'moussa.ba@uadb.edu.sn', role: 'Étudiant', actif: false },
-  { id: 4, prenom: 'Sokhna', nom: 'Sy', email: 'sokhna.sy@uadb.edu.sn', role: 'Enseignant', actif: true },
-  { id: 5, prenom: 'Oumar', nom: 'Ndiaye', email: 'oumar.ndiaye@uadb.edu.sn', role: 'Étudiant', actif: true },
-  { id: 6, prenom: 'Awa', nom: 'Sarr', email: 'awa.sarr@uadb.edu.sn', role: 'Enseignant', actif: true },
+  { id: 1, prenom: 'Ali', nom: 'Fall', email: 'ali.fall@uadb.edu.sn', actif: true },
+  { id: 2, prenom: 'Fatou', nom: 'Diop', email: 'fatou.diop@uadb.edu.sn', actif: true },
+  { id: 3, prenom: 'Moussa', nom: 'Ba', email: 'moussa.ba@uadb.edu.sn', actif: false },
+  { id: 4, prenom: 'Sokhna', nom: 'Sy', email: 'sokhna.sy@uadb.edu.sn', actif: true },
+  { id: 5, prenom: 'Oumar', nom: 'Ndiaye', email: 'oumar.ndiaye@uadb.edu.sn', actif: true },
+  { id: 6, prenom: 'Awa', nom: 'Sarr', email: 'awa.sarr@uadb.edu.sn', actif: true },
 ];
 
-const GestionUtilisateurs = () => {
+const GestionEnseignants = () => {
   const [users, setUsers] = useState(initialUsers);
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({ prenom: '', nom: '', email: '', role: 'Étudiant', password: '' });
+  const [formData, setFormData] = useState({
+    prenom: '',
+    nom: '',
+    email: '',
+  });
   const [editingUser, setEditingUser] = useState(null);
-
   const [search, setSearch] = useState('');
-  const [filterRole, setFilterRole] = useState('');
 
   const openForm = (user = null) => {
     if (user) {
-      setFormData(user);
+      setFormData({ ...user });
       setEditingUser(user);
     } else {
-      setFormData({ prenom: '', nom: '', email: '', role: 'Étudiant', password: '' });
+      setFormData({ prenom: '', nom: '', email: '' });
       setEditingUser(null);
     }
     setShowModal(true);
@@ -35,11 +37,15 @@ const GestionUtilisateurs = () => {
     e.preventDefault();
     if (editingUser) {
       const updatedUsers = users.map((u) =>
-        u.id === editingUser.id ? { ...formData, id: editingUser.id } : u
+        u.id === editingUser.id ? { ...formData, id: editingUser.id, actif: editingUser.actif } : u
       );
       setUsers(updatedUsers);
     } else {
-      const newUser = { ...formData, id: users.length + 1, actif: true };
+      const newUser = {
+        ...formData,
+        id: users.length + 1,
+        actif: true,
+      };
       setUsers([...users, newUser]);
     }
     setShowModal(false);
@@ -57,50 +63,34 @@ const GestionUtilisateurs = () => {
     setUsers(updated);
   };
 
-  // Filtrage des utilisateurs avec recherche et filtre par rôle
   const filteredUsers = users.filter((u) => {
     const matchSearch =
       u.prenom.toLowerCase().includes(search.toLowerCase()) ||
       u.nom.toLowerCase().includes(search.toLowerCase()) ||
       u.email.toLowerCase().includes(search.toLowerCase());
-
-    const matchRole = filterRole ? u.role === filterRole : true;
-
-    return matchSearch && matchRole;
+    return matchSearch;
   });
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-800">👥 Gestion des utilisateurs</h1>
+        <h1 className="text-3xl font-bold text-gray-800">👥 Gestion des enseignants</h1>
         <button
           onClick={() => openForm()}
           className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
         >
           <Plus size={18} />
-          Ajouter un utilisateur
+          Ajouter un enseignant
         </button>
       </div>
 
-      {/* Barre de recherche et filtre */}
-      <div className="flex flex-col md:flex-row gap-4">
-        <input
-          type="text"
-          placeholder="🔍 Rechercher par prénom, nom ou email..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-1/2 px-4 py-2 border rounded shadow-sm"
-        />
-        <select
-          value={filterRole}
-          onChange={(e) => setFilterRole(e.target.value)}
-          className="w-full md:w-1/4 px-4 py-2 border rounded shadow-sm"
-        >
-          <option value="">Tous les rôles</option>
-          <option value="Étudiant">Étudiant</option>
-          <option value="Enseignant">Enseignant</option>
-        </select>
-      </div>
+      <input
+        type="text"
+        placeholder="🔍 Rechercher par prénom, nom ou email..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full md:w-1/2 px-4 py-2 border rounded shadow-sm"
+      />
 
       <div className="overflow-x-auto">
         <table className="w-full table-auto bg-white shadow rounded">
@@ -109,7 +99,6 @@ const GestionUtilisateurs = () => {
               <th className="p-3">Prénom</th>
               <th className="p-3">Nom</th>
               <th className="p-3">Email</th>
-              <th className="p-3">Rôle</th>
               <th className="p-3">Statut</th>
               <th className="p-3 text-center">Actions</th>
             </tr>
@@ -120,9 +109,6 @@ const GestionUtilisateurs = () => {
                 <td className="p-3">{user.prenom}</td>
                 <td className="p-3">{user.nom}</td>
                 <td className="p-3">{user.email}</td>
-                <td className="p-3">
-                  <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">{user.role}</span>
-                </td>
                 <td className="p-3">
                   <span className={`px-2 py-1 rounded text-xs font-semibold ${user.actif ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                     {user.actif ? 'Actif' : 'Inactif'}
@@ -142,7 +128,6 @@ const GestionUtilisateurs = () => {
         </table>
       </div>
 
-      {/* Modal d'ajout/modification */}
       <AnimatePresence>
         {showModal && (
           <div className="fixed inset-0 z-50 bg-black bg-opacity-30 flex items-center justify-center">
@@ -160,7 +145,7 @@ const GestionUtilisateurs = () => {
               </button>
 
               <h2 className="text-xl font-bold mb-4 text-gray-800">
-                {editingUser ? 'Modifier' : 'Ajouter'} un utilisateur
+                {editingUser ? 'Modifier' : 'Ajouter'} un enseignant
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -198,31 +183,6 @@ const GestionUtilisateurs = () => {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Rôle</label>
-                  <select
-                    name="role"
-                    value={formData.role}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded"
-                  >
-                    <option value="Enseignant">Enseignant</option>
-                    <option value="Étudiant">Étudiant</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Mot de passe</label>
-                  <input
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required={!editingUser}
-                    type="password"
-                    className="w-full px-4 py-2 border border-gray-300 rounded"
-                  />
-                </div>
-
                 <button
                   type="submit"
                   className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
@@ -238,4 +198,4 @@ const GestionUtilisateurs = () => {
   );
 };
 
-export default GestionUtilisateurs;
+export default GestionEnseignants;

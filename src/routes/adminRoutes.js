@@ -1,5 +1,5 @@
 import Dashboard from "../views/admin/Dashboard";
-import GestionUtilisateurs from "../views/admin/GestionUtilisateurs";
+import GestionUtilisateurs from "../views/admin/GestionEnseignants";
 import GestionDocuments from "../views/admin/GestionDocuments";
 import Emprunts from "../views/admin/Emprunts";
 
