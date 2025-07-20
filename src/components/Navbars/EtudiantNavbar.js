@@ -4,7 +4,7 @@ import { LogOut, User } from 'lucide-react';
 const EtudiantNavbar = ({ logout }) => {
   return (
     <header className="h-16 bg-white border-b border-gray-200 shadow-sm px-6 flex items-center justify-between">
-      <div className="text-xl font-bold text-indigo-800">Bibliothèque UADB</div>
+      <div className="text-xl font-bold text-indigo-800">Bibliothèque UIDT</div>
 
       <div className="flex items-center space-x-4">
         <User className="text-gray-600" />
